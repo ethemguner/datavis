@@ -6,7 +6,6 @@ import sys
 from Font import font
 import xlsxwriter
 import xlrd
-from file_op import operation
 
 class Window (QtWidgets.QWidget):
     def __init__(self):
@@ -41,7 +40,7 @@ class Window (QtWidgets.QWidget):
         self.setLayout(vbox)
         self.show()
         self.loadFile_Button.clicked.connect(self.loadProcess)
-        self.browseData_Button.clicked.connect(self.pg2)
+        self.browseData_Button.clicked.connect(self.openPage2)
 
     def loadProcess(self):
         fileDialog = QtWidgets.QFileDialog()
@@ -53,8 +52,8 @@ class Window (QtWidgets.QWidget):
         else:
             print("file couldn't read.")
 
-    def pg2(self):
-        self.openPage2 = DataBrowser(self.df)
+    def openPage2(self):
+        self.openPage = DataBrowser(self.df)
 
 class DataBrowser(QtWidgets.QWidget):
     def __init__(self, df):
