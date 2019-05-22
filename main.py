@@ -12,48 +12,179 @@ class Window (QtWidgets.QWidget):
         super().__init__()
         self.ui()
         self.theme()
+        self.otherSettings()
+        
+    def otherSettings(self):
+        self.loadFile_Button.setFixedWidth(200)
+        self.browseData_Button.setFixedWidth(200)
+        self.infoLabel.setAlignment(QtCore.Qt.AlignCenter)
+
+        self.yTitle.setPlaceholderText("for instance: Price")
+        self.yTitle.setFixedWidth(250)
+        self.xTitle.setPlaceholderText("for instance: Currency")
+        self.xTitle.setFixedWidth(250)
+        self.graphTitle.setPlaceholderText("the title of graph")
+        self.graphTitle.setFixedWidth(250)
+
     def theme(self):
-        font.adjust_font(self.loadFile_Label, "QLabel", "Trebuchet MS", font_size=14, bold=True, color="#0098FB")
+        font.adjust_font(self.loadFile_Label, "QLabel", "Trebuchet MS", 
+                        font_size=14, bold=True, color="#0098FB")
 
-        font.adjust_font(self.loadFile_Button, "QPushButton", "Trebuchet MS", font_size=12, 
-                        bold=True, color="#0098FB", bg_color="black")
+        font.adjust_font(self.loadFile_Button, "QPushButton", "Candara", 
+                        font_size=12, bold=True, color="#0098FB", 
+                        bg_color="black")
 
-        font.adjust_font(self.browseData_Button, "QPushButton", "Trebuchet MS", font_size=12, 
-                        bold=True, color="#0098FB", bg_color="black")
+        font.adjust_font(self.browseData_Button, "QPushButton", "Candara", 
+                        font_size=12, bold=True, color="#0098FB", 
+                        bg_color="black")
+
+        font.adjust_font(self.infoLabel, "QLabel", "Candara", 
+                        font_size=12, bold=True, color="black", 
+                        bg_color="#5F5F5F")
+
+        font.adjust_font(self.settingsLabel, "QLabel", "Trebuchet MS", 
+                        font_size=14, bold=True, color="#0098FB")
+
+        font.adjust_font(self.timeSeriesRB, "QRadioButton", "Trebuchet MS", 
+                        font_size=11, color="#FFBD06")
+
+        font.adjust_font(self.barChartRB, "QRadioButton", "Trebuchet MS", 
+                        font_size=11, color="#FFBD06")
+
+        font.adjust_font(self.lineChartRB, "QRadioButton", "Trebuchet MS", 
+                        font_size=11, color="#FFBD06")
+
+        font.adjust_font(self.yTitleLabel, "QLabel", "Candara", 
+                        font_size=12, color="#3685FA")
+
+        font.adjust_font(self.xTitleLabel, "QLabel", "Candara", 
+                        font_size=12, color="#3685FA")
+
+        font.adjust_font(self.graphTitleLabel, "QLabel", "Candara", 
+                        font_size=12, color="#3685FA")
+
+        font.adjust_font(self.graphTitle, "QLineEdit", "Trebuchet MS", 
+                        font_size=10, color="#000000", bg_color="#9E9E9E")
+
+        font.adjust_font(self.xTitle, "QLineEdit", "Trebuchet MS", 
+                        font_size=10, color="#000000", bg_color="#9E9E9E")
+
+        font.adjust_font(self.yTitle, "QLineEdit", "Trebuchet MS", 
+                        font_size=10, color="#000000", bg_color="#9E9E9E")
                         
     def ui(self):
-        self.loadFile_Label     = QtWidgets.QLabel("FILE:  ")
-        self.loadFile_Button    = QtWidgets.QPushButton("Load Data")
+        #Empty Label
+        self.emptyLabel         = QtWidgets.QLabel("")
+
+        #FILE SECTION.
+        self.loadFile_Label     = QtWidgets.QLabel("FILE")
+        self.loadFile_Button    = QtWidgets.QPushButton("Load File")
         self.browseData_Button  = QtWidgets.QPushButton("Browse Data")
-        
-        vbox        = QtWidgets.QVBoxLayout()
-        file_hbox   = QtWidgets.QHBoxLayout()
-    
-        file_hbox.addWidget(self.loadFile_Label)
-        file_hbox.addWidget(self.loadFile_Button)
-        file_hbox.addWidget(self.browseData_Button)
-        
-        vbox.addLayout(file_hbox)
-        file_hbox.addStretch()
+        self.infoLabel          = QtWidgets.QLabel("No data loaded.")
+
+        #GRAPH SETTINGS
+        self.settingsLabel      = QtWidgets.QLabel("\nGRAPH SETTINGS")
+        self.timeSeriesRB       = QtWidgets.QRadioButton("Time Series")
+        self.barChartRB         = QtWidgets.QRadioButton("Bar chart")
+        self.lineChartRB        = QtWidgets.QRadioButton("Line Chart")
+        self.yTitleLabel        = QtWidgets.QLabel("Title of y Line\t")
+        self.xTitleLabel        = QtWidgets.QLabel("Title of x Line\t")
+        self.graphTitleLabel    = QtWidgets.QLabel("Title of Graph\t")
+        self.yTitle             = QtWidgets.QLineEdit()
+        self.xTitle             = QtWidgets.QLineEdit()
+        self.graphTitle         = QtWidgets.QLineEdit()
+
+        vbox           = QtWidgets.QVBoxLayout()
+        hbox           = QtWidgets.QHBoxLayout()
+        buttonsLayout  = QtWidgets.QHBoxLayout()
+        infoHLayout    = QtWidgets.QHBoxLayout()
+        settingHBox    = QtWidgets.QHBoxLayout()
+        rbHBox         = QtWidgets.QHBoxLayout()
+        yTitlesHBox    = QtWidgets.QHBoxLayout()
+        xTitlesHBox    = QtWidgets.QHBoxLayout()
+        titleGraphHBox = QtWidgets.QHBoxLayout()
+        emptyHBox      = QtWidgets.QHBoxLayout()
+
+        vbox.addWidget(self.loadFile_Label)
+        buttonsLayout.addWidget(self.loadFile_Button)
+        buttonsLayout.addWidget(self.browseData_Button)
+        infoHLayout.addWidget(self.infoLabel)
+        settingHBox.addWidget(self.settingsLabel)
+        rbHBox.addWidget(self.timeSeriesRB)
+        rbHBox.addWidget(self.barChartRB)
+        rbHBox.addWidget(self.lineChartRB)
+        emptyHBox.addWidget(self.emptyLabel)
+        xTitlesHBox.addWidget(self.xTitleLabel)
+        xTitlesHBox.addWidget(self.xTitle)
+        yTitlesHBox.addWidget(self.yTitleLabel)
+        yTitlesHBox.addWidget(self.yTitle)
+        titleGraphHBox.addWidget(self.graphTitleLabel)
+        titleGraphHBox.addWidget(self.graphTitle)
+
+        vbox.addLayout(buttonsLayout)
+        vbox.addLayout(infoHLayout)
+        vbox.addLayout(settingHBox)
+        vbox.addLayout(rbHBox)
+        vbox.addLayout(emptyHBox)
+        vbox.addLayout(xTitlesHBox)
+        vbox.addLayout(yTitlesHBox)
+        vbox.addLayout(titleGraphHBox)
         vbox.addStretch()
 
-        self.setLayout(vbox)
+        hbox.addStretch()
+        hbox.addLayout(vbox)
+        hbox.addStretch()
+
+        self.setLayout(hbox)
         self.show()
         self.loadFile_Button.clicked.connect(self.loadProcess)
         self.browseData_Button.clicked.connect(self.openPage2)
 
     def loadProcess(self):
         fileDialog = QtWidgets.QFileDialog()
-        fName = fileDialog.getOpenFileName(None,'Load File')
+        self.fName = fileDialog.getOpenFileName(None,'Load File')
 
-        if fName[0]:
-            data = pd.read_excel(fName[0])
-            self.df = pd.DataFrame(data)
-        else:
-            print("file couldn't read.")
+        try:
+            if self.fName[0]:
+                data = pd.read_excel(self.fName[0])
+                self.mainDF = pd.DataFrame(data)
+                self.successfulLoad()
+        except:
+            self.failureLoad()
+
+    def successfulLoad(self):
+        spliting_list = self.fName[0].split("/")
+        loadedFileName = spliting_list[len(spliting_list)-1]
+        self.infoLabel.setText("{} loaded successfully!".format(loadedFileName) )
+        font.adjust_font(self.infoLabel, "QLabel", 
+                        "Candara", font_size=12, 
+                        bold=True, color="#00FF66", 
+                        bg_color="#5F5F5F")
+
+    def failureLoad(self):
+        try:
+            spliting_list = self.fName[0].split("/")
+            loadedFileName = spliting_list[len(spliting_list)-1]
+            self.infoLabel.setText("FAILED! {} couldn't load.".format(loadedFileName) )
+            font.adjust_font(self.infoLabel, "QLabel", 
+                            "Candara", font_size=12, 
+                            bold=True, color="#FF0000", 
+                            bg_color="#5F5F5F")
+        except AttributeError:
+            self.failureBrowse()
+
+    def failureBrowse(self):
+        self.infoLabel.setText("There isn't any loaded data to browse.")
+        font.adjust_font(self.infoLabel, "QLabel", 
+                        "Candara", font_size=12, 
+                        bold=True, color="#FF0000", 
+                        bg_color="#5F5F5F")
 
     def openPage2(self):
-        self.openPage = DataBrowser(self.df)
+        try:
+            self.openPage = DataBrowser(self.mainDF)
+        except AttributeError:
+            self.failureLoad()
 
 class DataBrowser(QtWidgets.QWidget):
     def __init__(self, df):
@@ -91,7 +222,7 @@ class DataBrowser(QtWidgets.QWidget):
 app = QtWidgets.QApplication(sys.argv)
 window = Window()
 window.move(200, 120)
-window.setFixedSize(500, 700)
+window.setFixedSize(950, 700)
 app.setStyle("Fusion")
 window.setStyleSheet("Window {background : #505050;}")
 sys.exit(app.exec_())
