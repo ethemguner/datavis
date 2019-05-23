@@ -15,8 +15,9 @@ class Window (QtWidgets.QWidget):
         self.otherSettings()
         
     def otherSettings(self):
-        self.loadFile_Button.setFixedWidth(200)
-        self.browseData_Button.setFixedWidth(200)
+        self.loadFile_Button.setFixedWidth(250)
+        self.browseData_Button.setFixedWidth(250)
+        self.selectColButton.setFixedWidth(250)
         self.infoLabel.setAlignment(QtCore.Qt.AlignCenter)
 
         self.yTitle.setPlaceholderText("for instance: Price")
@@ -25,6 +26,8 @@ class Window (QtWidgets.QWidget):
         self.xTitle.setFixedWidth(250)
         self.graphTitle.setPlaceholderText("the title of graph")
         self.graphTitle.setFixedWidth(250)
+
+        
 
     def theme(self):
         font.adjust_font(self.loadFile_Label, "QLabel", "Trebuchet MS", 
@@ -71,7 +74,19 @@ class Window (QtWidgets.QWidget):
 
         font.adjust_font(self.yTitle, "QLineEdit", "Trebuchet MS", 
                         font_size=10, color="#000000", bg_color="#9E9E9E")
-                        
+
+        font.adjust_font(self.dataSettingsLabel, "QLabel", "Trebuchet MS", 
+                        font_size=14, bold=True, color="#0098FB")
+
+        font.adjust_font(self.columns, "QListWidget", "Trebuchet MS", 
+                        font_size=14, bold=True, color="#FFBD06", bg_color="#5F5F5F")
+
+        font.adjust_font(self.columnsLabel, "QLabel", "Candara", 
+                        font_size=12, color="#3685FA")
+
+        font.adjust_font(self.selectColButton, "QPushButton", "Candara", 
+                        font_size=12, bold=True, color="#0098FB", 
+                        bg_color="black")
     def ui(self):
         #Empty Label
         self.emptyLabel         = QtWidgets.QLabel("")
@@ -93,7 +108,12 @@ class Window (QtWidgets.QWidget):
         self.yTitle             = QtWidgets.QLineEdit()
         self.xTitle             = QtWidgets.QLineEdit()
         self.graphTitle         = QtWidgets.QLineEdit()
-
+        #DATA SETTINGS
+        self.dataSettingsLabel  = QtWidgets.QLabel("\nDATA SETTINGS")
+        self.columns            = QtWidgets.QListWidget()
+        self.columnsLabel       = QtWidgets.QLabel("Columns of Data")
+        self.selectColButton    = QtWidgets.QPushButton("SELECT COLUMN FOR VISUALIZATION")
+        
         vbox           = QtWidgets.QVBoxLayout()
         hbox           = QtWidgets.QHBoxLayout()
         buttonsLayout  = QtWidgets.QHBoxLayout()
@@ -104,6 +124,10 @@ class Window (QtWidgets.QWidget):
         xTitlesHBox    = QtWidgets.QHBoxLayout()
         titleGraphHBox = QtWidgets.QHBoxLayout()
         emptyHBox      = QtWidgets.QHBoxLayout()
+        dataSettHBox   = QtWidgets.QHBoxLayout()
+        dataColLabHBox = QtWidgets.QHBoxLayout()
+        columnListHBox = QtWidgets.QHBoxLayout()
+        buttonHBox     = QtWidgets.QHBoxLayout()
 
         vbox.addWidget(self.loadFile_Label)
         buttonsLayout.addWidget(self.loadFile_Button)
@@ -120,7 +144,11 @@ class Window (QtWidgets.QWidget):
         yTitlesHBox.addWidget(self.yTitle)
         titleGraphHBox.addWidget(self.graphTitleLabel)
         titleGraphHBox.addWidget(self.graphTitle)
-
+        dataSettHBox.addWidget(self.dataSettingsLabel)
+        dataColLabHBox.addWidget(self.columnsLabel)
+        columnListHBox.addWidget(self.columns)
+        buttonHBox.addWidget(self.selectColButton)
+        
         vbox.addLayout(buttonsLayout)
         vbox.addLayout(infoHLayout)
         vbox.addLayout(settingHBox)
@@ -129,6 +157,10 @@ class Window (QtWidgets.QWidget):
         vbox.addLayout(xTitlesHBox)
         vbox.addLayout(yTitlesHBox)
         vbox.addLayout(titleGraphHBox)
+        vbox.addLayout(dataSettHBox)
+        vbox.addLayout(dataColLabHBox)
+        vbox.addLayout(columnListHBox)
+        vbox.addLayout(buttonHBox)
         vbox.addStretch()
 
         hbox.addStretch()
@@ -139,7 +171,9 @@ class Window (QtWidgets.QWidget):
         self.show()
         self.loadFile_Button.clicked.connect(self.loadProcess)
         self.browseData_Button.clicked.connect(self.openPage2)
-
+        self.selectColButton.clicked.connect(self.columnSelector)
+        self.SELECTED_COLUMNS = []
+        
     def loadProcess(self):
         fileDialog = QtWidgets.QFileDialog()
         self.fName = fileDialog.getOpenFileName(None,'Load File')
@@ -149,8 +183,20 @@ class Window (QtWidgets.QWidget):
                 data = pd.read_excel(self.fName[0])
                 self.mainDF = pd.DataFrame(data)
                 self.successfulLoad()
+                self.listColumns()
         except:
             self.failureLoad()
+    
+    def listColumns(self):
+        self.columns.clear()
+        for column in list(self.mainDF.columns):
+            self.columns.addItem(column)
+
+    def columnSelector(self):
+        self.CURRENT_COLUMN = self.columns.currentItem().text()
+        self.SELECTED_COLUMNS.append(self.CURRENT_COLUMN)
+
+        print("Current selected columns: ", self.SELECTED_COLUMNS)
 
     def successfulLoad(self):
         spliting_list = self.fName[0].split("/")
@@ -221,8 +267,8 @@ class DataBrowser(QtWidgets.QWidget):
 
 app = QtWidgets.QApplication(sys.argv)
 window = Window()
-window.move(200, 120)
-window.setFixedSize(950, 700)
+window.move(400, 120)
+window.setFixedSize(650, 850)
 app.setStyle("Fusion")
 window.setStyleSheet("Window {background : #505050;}")
 sys.exit(app.exec_())
