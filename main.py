@@ -17,8 +17,9 @@ class Window (QtWidgets.QWidget):
     def otherSettings(self):
         self.loadFile_Button.setFixedWidth(250)
         self.browseData_Button.setFixedWidth(250)
-        self.selectColButton.setFixedWidth(250)
+        self.selectColButton.setFixedWidth(140)
         self.infoLabel.setAlignment(QtCore.Qt.AlignCenter)
+        self.columnsLabel.setAlignment(QtCore.Qt.AlignCenter)
 
         self.yTitle.setPlaceholderText("for instance: Price")
         self.yTitle.setFixedWidth(250)
@@ -26,8 +27,6 @@ class Window (QtWidgets.QWidget):
         self.xTitle.setFixedWidth(250)
         self.graphTitle.setPlaceholderText("the title of graph")
         self.graphTitle.setFixedWidth(250)
-
-        
 
     def theme(self):
         font.adjust_font(self.loadFile_Label, "QLabel", "Trebuchet MS", 
@@ -112,7 +111,7 @@ class Window (QtWidgets.QWidget):
         self.dataSettingsLabel  = QtWidgets.QLabel("\nDATA SETTINGS")
         self.columns            = QtWidgets.QListWidget()
         self.columnsLabel       = QtWidgets.QLabel("Columns of Data")
-        self.selectColButton    = QtWidgets.QPushButton("SELECT COLUMN FOR VISUALIZATION")
+        self.selectColButton    = QtWidgets.QPushButton("Select Column")
         
         vbox           = QtWidgets.QVBoxLayout()
         hbox           = QtWidgets.QHBoxLayout()
@@ -173,7 +172,7 @@ class Window (QtWidgets.QWidget):
         self.browseData_Button.clicked.connect(self.openPage2)
         self.selectColButton.clicked.connect(self.columnSelector)
         self.SELECTED_COLUMNS = []
-        
+
     def loadProcess(self):
         fileDialog = QtWidgets.QFileDialog()
         self.fName = fileDialog.getOpenFileName(None,'Load File')
@@ -268,7 +267,7 @@ class DataBrowser(QtWidgets.QWidget):
 app = QtWidgets.QApplication(sys.argv)
 window = Window()
 window.move(400, 120)
-window.setFixedSize(650, 850)
+window.setFixedSize(550, 850)
 app.setStyle("Fusion")
 window.setStyleSheet("Window {background : #505050;}")
 sys.exit(app.exec_())
