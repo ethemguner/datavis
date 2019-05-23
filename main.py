@@ -18,6 +18,7 @@ class Window (QtWidgets.QWidget):
         self.loadFile_Button.setFixedWidth(250)
         self.browseData_Button.setFixedWidth(250)
         self.selectColButton.setFixedWidth(140)
+        self.browseColumnButton.setFixedWidth(140)
         self.infoLabel.setAlignment(QtCore.Qt.AlignCenter)
         self.columnsLabel.setAlignment(QtCore.Qt.AlignCenter)
 
@@ -56,6 +57,9 @@ class Window (QtWidgets.QWidget):
         font.adjust_font(self.lineChartRB, "QRadioButton", "Trebuchet MS", 
                         font_size=11, color="#FFBD06")
 
+        font.adjust_font(self.trendCheckBox, "QCheckBox", "Trebuchet MS", 
+                        font_size=11, color="#FFBD06")
+
         font.adjust_font(self.yTitleLabel, "QLabel", "Candara", 
                         font_size=12, color="#3685FA")
 
@@ -78,12 +82,16 @@ class Window (QtWidgets.QWidget):
                         font_size=14, bold=True, color="#0098FB")
 
         font.adjust_font(self.columns, "QListWidget", "Trebuchet MS", 
-                        font_size=14, bold=True, color="#FFBD06", bg_color="#5F5F5F")
+                        font_size=12, bold=True, color="#FFBD06", bg_color="#5F5F5F")
 
         font.adjust_font(self.columnsLabel, "QLabel", "Candara", 
-                        font_size=12, color="#3685FA")
+                        font_size=13, color="#DADADA")
 
         font.adjust_font(self.selectColButton, "QPushButton", "Candara", 
+                        font_size=12, bold=True, color="#0098FB", 
+                        bg_color="black")
+
+        font.adjust_font(self.browseColumnButton, "QPushButton", "Candara", 
                         font_size=12, bold=True, color="#0098FB", 
                         bg_color="black")
     def ui(self):
@@ -101,17 +109,20 @@ class Window (QtWidgets.QWidget):
         self.timeSeriesRB       = QtWidgets.QRadioButton("Time Series")
         self.barChartRB         = QtWidgets.QRadioButton("Bar chart")
         self.lineChartRB        = QtWidgets.QRadioButton("Line Chart")
+        self.trendCheckBox      = QtWidgets.QCheckBox("Show Trend")
         self.yTitleLabel        = QtWidgets.QLabel("Title of y Line\t")
         self.xTitleLabel        = QtWidgets.QLabel("Title of x Line\t")
         self.graphTitleLabel    = QtWidgets.QLabel("Title of Graph\t")
         self.yTitle             = QtWidgets.QLineEdit()
         self.xTitle             = QtWidgets.QLineEdit()
         self.graphTitle         = QtWidgets.QLineEdit()
+
         #DATA SETTINGS
         self.dataSettingsLabel  = QtWidgets.QLabel("\nDATA SETTINGS")
         self.columns            = QtWidgets.QListWidget()
         self.columnsLabel       = QtWidgets.QLabel("Columns of Data")
         self.selectColButton    = QtWidgets.QPushButton("Select Column")
+        self.browseColumnButton = QtWidgets.QPushButton("Browse Column")
         
         vbox           = QtWidgets.QVBoxLayout()
         hbox           = QtWidgets.QHBoxLayout()
@@ -136,6 +147,7 @@ class Window (QtWidgets.QWidget):
         rbHBox.addWidget(self.timeSeriesRB)
         rbHBox.addWidget(self.barChartRB)
         rbHBox.addWidget(self.lineChartRB)
+        rbHBox.addWidget(self.trendCheckBox)
         emptyHBox.addWidget(self.emptyLabel)
         xTitlesHBox.addWidget(self.xTitleLabel)
         xTitlesHBox.addWidget(self.xTitle)
@@ -147,6 +159,7 @@ class Window (QtWidgets.QWidget):
         dataColLabHBox.addWidget(self.columnsLabel)
         columnListHBox.addWidget(self.columns)
         buttonHBox.addWidget(self.selectColButton)
+        buttonHBox.addWidget(self.browseColumnButton)
         
         vbox.addLayout(buttonsLayout)
         vbox.addLayout(infoHLayout)
@@ -169,8 +182,9 @@ class Window (QtWidgets.QWidget):
         self.setLayout(hbox)
         self.show()
         self.loadFile_Button.clicked.connect(self.loadProcess)
-        self.browseData_Button.clicked.connect(self.openPage2)
+        self.browseData_Button.clicked.connect(self.dataBrowse)
         self.selectColButton.clicked.connect(self.columnSelector)
+        self.browseColumnButton.clicked.connect(self.columnBrowse)
         self.SELECTED_COLUMNS = []
 
     def loadProcess(self):
@@ -225,18 +239,27 @@ class Window (QtWidgets.QWidget):
                         bold=True, color="#FF0000", 
                         bg_color="#5F5F5F")
 
-    def openPage2(self):
+    def dataBrowse(self):
         try:
-            self.openPage = DataBrowser(self.mainDF)
+            self.isItSingleColumn = False
+            self.openPage = DataBrowser(self.mainDF, self.isItSingleColumn)
+        except AttributeError:
+            self.failureLoad()
+
+    def columnBrowse(self):
+        try:
+            self.isItSingleColumn = True
+            self.singleColumn = self.mainDF['{}'.format(self.columns.currentItem().text() )]
+            self.openPage = DataBrowser(self.singleColumn, self.isItSingleColumn)
         except AttributeError:
             self.failureLoad()
 
 class DataBrowser(QtWidgets.QWidget):
-    def __init__(self, df):
+    def __init__(self, df, condition):
         super().__init__()
         self.setWindowTitle("Data Browser")
         self.init_ui()
-        self.setTable(df)
+        self.setTable(df, condition)
 
     def init_ui(self):
         self.dataTable = QtWidgets.QTableWidget()
@@ -251,18 +274,28 @@ class DataBrowser(QtWidgets.QWidget):
         self.setLayout(hbox)
         self.show()
 
-    def setTable(self, df):
+    def setTable(self, df, condition):
+        print(condition)
+        if condition == False:
+            self.df_row = df.shape[0]
+            self.df_col = df.shape[1]
 
-        self.df_row = df.shape[0]
-        self.df_col = df.shape[1]
+            self.dataTable.setRowCount(self.df_row)
+            self.dataTable.setColumnCount(self.df_col)
 
-        self.dataTable.setRowCount(self.df_row)
-        self.dataTable.setColumnCount(self.df_col)
+            for rowIndex in range(0, self.df_row):
+                for colIndex in range(0, self.df_col):
+                    cell = df.iat[rowIndex,colIndex]
+                    self.dataTable.setItem(rowIndex,colIndex, QtWidgets.QTableWidgetItem(str(cell)))
+        else:
+            self.df_row = df.shape[0]
 
-        for rowIndex in range(0, self.df_row):
-            for colIndex in range(0, self.df_col):
-                cell = df.iat[rowIndex,colIndex]
-                self.dataTable.setItem(rowIndex,colIndex, QtWidgets.QTableWidgetItem(str(cell)))
+            self.dataTable.setRowCount(self.df_row)
+            self.dataTable.setColumnCount(1)
+
+            for rowIndex in range(0, self.df_row):
+                cell = df.iat[rowIndex]
+                self.dataTable.setItem(rowIndex,0, QtWidgets.QTableWidgetItem(str(cell)))
 
 app = QtWidgets.QApplication(sys.argv)
 window = Window()
