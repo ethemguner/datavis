@@ -13,12 +13,27 @@ class Window (QtWidgets.QWidget):
         self.ui()
         self.theme()
         self.otherSettings()
+        self.enabledWidgets()
+        self.SELECTED_COLUMNS = []
+        self.MULTIPLE_COLUMNS = []
+    
+    def enabledWidgets(self):
+        self.x_data.setEnabled(False)
+        self.multipleColumnCB.setEnabled(False)
+
+        font.adjust_font(self.x_data, "QRadioButton", "Trebuchet MS", 
+                        font_size=11, color="#908F8F")
+
+        font.adjust_font(self.multipleColumnCB, "QCheckBox", "Trebuchet MS", 
+                        font_size=11, color="#908F8F")
         
     def otherSettings(self):
         self.loadFile_Button.setFixedWidth(250)
         self.browseData_Button.setFixedWidth(250)
         self.selectColButton.setFixedWidth(140)
         self.browseColumnButton.setFixedWidth(140)
+        self.clearSelectedButt.setFixedWidth(140)
+        self.printGraph.setFixedWidth(140)
         self.infoLabel.setAlignment(QtCore.Qt.AlignCenter)
         self.columnsLabel.setAlignment(QtCore.Qt.AlignCenter)
 
@@ -28,6 +43,14 @@ class Window (QtWidgets.QWidget):
         self.xTitle.setFixedWidth(250)
         self.graphTitle.setPlaceholderText("the title of graph")
         self.graphTitle.setFixedWidth(250)
+        self.figSizeX.setPlaceholderText("inch type")
+        self.figSizeX.setFixedWidth(250)
+        self.figSizeY.setPlaceholderText("inch type")
+        self.figSizeY.setFixedWidth(250)
+
+        self.rbGroup.addButton(self.timeSeriesRB)
+        self.rbGroup.addButton(self.barChartRB)
+        self.rbGroup.addButton(self.lineChartRB)
 
     def theme(self):
         font.adjust_font(self.loadFile_Label, "QLabel", "Trebuchet MS", 
@@ -69,6 +92,12 @@ class Window (QtWidgets.QWidget):
         font.adjust_font(self.graphTitleLabel, "QLabel", "Candara", 
                         font_size=12, color="#3685FA")
 
+        font.adjust_font(self.figSizeLabelX, "QLabel", "Candara", 
+                        font_size=12, color="#3685FA")
+
+        font.adjust_font(self.figSizeLabelY, "QLabel", "Candara", 
+                        font_size=12, color="#3685FA")
+
         font.adjust_font(self.graphTitle, "QLineEdit", "Trebuchet MS", 
                         font_size=10, color="#000000", bg_color="#9E9E9E")
 
@@ -76,6 +105,12 @@ class Window (QtWidgets.QWidget):
                         font_size=10, color="#000000", bg_color="#9E9E9E")
 
         font.adjust_font(self.yTitle, "QLineEdit", "Trebuchet MS", 
+                        font_size=10, color="#000000", bg_color="#9E9E9E")
+
+        font.adjust_font(self.figSizeX, "QLineEdit", "Trebuchet MS", 
+                        font_size=10, color="#000000", bg_color="#9E9E9E")
+
+        font.adjust_font(self.figSizeY, "QLineEdit", "Trebuchet MS", 
                         font_size=10, color="#000000", bg_color="#9E9E9E")
 
         font.adjust_font(self.dataSettingsLabel, "QLabel", "Trebuchet MS", 
@@ -92,6 +127,16 @@ class Window (QtWidgets.QWidget):
                         bg_color="black")
 
         font.adjust_font(self.browseColumnButton, "QPushButton", "Candara", 
+                        font_size=12, bold=True, color="#0098FB", 
+                        bg_color="black")
+
+        font.adjust_font(self.clearSelectedButt, "QPushButton", "Candara", 
+                        font_size=12, bold=True, color="#0098FB", 
+                        bg_color="black")
+
+
+
+        font.adjust_font(self.printGraph, "QPushButton", "Candara", 
                         font_size=12, bold=True, color="#0098FB", 
                         bg_color="black")
     def ui(self):
@@ -116,13 +161,25 @@ class Window (QtWidgets.QWidget):
         self.yTitle             = QtWidgets.QLineEdit()
         self.xTitle             = QtWidgets.QLineEdit()
         self.graphTitle         = QtWidgets.QLineEdit()
+        self.figSizeLabelX      = QtWidgets.QLabel("Fig. size horizontal")
+        self.figSizeLabelY      = QtWidgets.QLabel("Fig. size vertical")
+        self.figSizeX           = QtWidgets.QLineEdit()
+        self.figSizeY           = QtWidgets.QLineEdit()
+        self.rbGroup            = QtWidgets.QButtonGroup()
+
 
         #DATA SETTINGS
         self.dataSettingsLabel  = QtWidgets.QLabel("\nDATA SETTINGS")
         self.columns            = QtWidgets.QListWidget()
+        self.x_data             = QtWidgets.QRadioButton("X Data")
+        self.multipleColumnCB   = QtWidgets.QCheckBox("Multiple Column")
         self.columnsLabel       = QtWidgets.QLabel("Columns of Data")
         self.selectColButton    = QtWidgets.QPushButton("Select Column")
         self.browseColumnButton = QtWidgets.QPushButton("Browse Column")
+        self.clearSelectedButt  = QtWidgets.QPushButton("Clear Selected Data")
+
+        #PRINT GRAPH
+        self.printGraph         = QtWidgets.QPushButton("Create Graph")
         
         vbox           = QtWidgets.QVBoxLayout()
         hbox           = QtWidgets.QHBoxLayout()
@@ -138,6 +195,10 @@ class Window (QtWidgets.QWidget):
         dataColLabHBox = QtWidgets.QHBoxLayout()
         columnListHBox = QtWidgets.QHBoxLayout()
         buttonHBox     = QtWidgets.QHBoxLayout()
+        figSizeXHBox   = QtWidgets.QHBoxLayout()
+        figSizeYHBox   = QtWidgets.QHBoxLayout()
+        lineRBHBox     = QtWidgets.QHBoxLayout()
+        printGraphHBox = QtWidgets.QHBoxLayout()
 
         vbox.addWidget(self.loadFile_Label)
         buttonsLayout.addWidget(self.loadFile_Button)
@@ -155,11 +216,19 @@ class Window (QtWidgets.QWidget):
         yTitlesHBox.addWidget(self.yTitle)
         titleGraphHBox.addWidget(self.graphTitleLabel)
         titleGraphHBox.addWidget(self.graphTitle)
+        figSizeXHBox.addWidget(self.figSizeLabelX)
+        figSizeXHBox.addWidget(self.figSizeX)
+        figSizeYHBox.addWidget(self.figSizeLabelY)
+        figSizeYHBox.addWidget(self.figSizeY)
         dataSettHBox.addWidget(self.dataSettingsLabel)
+        lineRBHBox.addWidget(self.x_data)
+        lineRBHBox.addWidget(self.multipleColumnCB)
         dataColLabHBox.addWidget(self.columnsLabel)
         columnListHBox.addWidget(self.columns)
         buttonHBox.addWidget(self.selectColButton)
         buttonHBox.addWidget(self.browseColumnButton)
+        buttonHBox.addWidget(self.clearSelectedButt)
+        printGraphHBox.addWidget(self.printGraph)
         
         vbox.addLayout(buttonsLayout)
         vbox.addLayout(infoHLayout)
@@ -169,10 +238,14 @@ class Window (QtWidgets.QWidget):
         vbox.addLayout(xTitlesHBox)
         vbox.addLayout(yTitlesHBox)
         vbox.addLayout(titleGraphHBox)
+        vbox.addLayout(figSizeXHBox)
+        vbox.addLayout(figSizeYHBox)
         vbox.addLayout(dataSettHBox)
+        vbox.addLayout(lineRBHBox)
         vbox.addLayout(dataColLabHBox)
         vbox.addLayout(columnListHBox)
         vbox.addLayout(buttonHBox)
+        vbox.addLayout(printGraphHBox)
         vbox.addStretch()
 
         hbox.addStretch()
@@ -185,7 +258,38 @@ class Window (QtWidgets.QWidget):
         self.browseData_Button.clicked.connect(self.dataBrowse)
         self.selectColButton.clicked.connect(self.columnSelector)
         self.browseColumnButton.clicked.connect(self.columnBrowse)
-        self.SELECTED_COLUMNS = []
+        self.printGraph.clicked.connect(self.graphType)
+        self.clearSelectedButt.clicked.connect(self.clearSelections)
+        self.lineChartRB.toggled.connect(self.enableLineChartSelections)
+    
+    def enableLineChartSelections(self):
+        if self.lineChartRB.isChecked() == True:
+            self.x_data.setEnabled(True)
+            self.multipleColumnCB.setEnabled(True)
+
+            font.adjust_font(self.x_data, "QRadioButton", "Trebuchet MS", 
+                            font_size=11, color="#FFBD06")
+
+            font.adjust_font(self.multipleColumnCB, "QCheckBox", "Trebuchet MS", 
+                            font_size=11, color="#FFBD06")
+        
+        elif self.lineChartRB.isChecked() == False:
+            self.x_data.setEnabled(False)
+            self.multipleColumnCB.setEnabled(False)
+
+            font.adjust_font(self.x_data, "QRadioButton", "Trebuchet MS", 
+                            font_size=11, color="#908F8F")
+
+            font.adjust_font(self.multipleColumnCB, "QCheckBox", "Trebuchet MS", 
+                            font_size=11, color="#908F8F")
+
+    def clearSelections(self):
+        self.CURRENT_COLUMN = None
+        self.SELECTED_COLUMNS.clear()
+        self.MULTIPLE_COLUMNS.clear()
+        self.MULTIPLE_X = None
+        self.singleColumn = None
+        self.MULTIPLE_CHOICE = None
 
     def loadProcess(self):
         fileDialog = QtWidgets.QFileDialog()
@@ -209,7 +313,8 @@ class Window (QtWidgets.QWidget):
         self.CURRENT_COLUMN = self.columns.currentItem().text()
         self.SELECTED_COLUMNS.append(self.CURRENT_COLUMN)
 
-        print("Current selected columns: ", self.SELECTED_COLUMNS)
+        self.singleColumn = self.mainDF['{}'.format(self.CURRENT_COLUMN)]
+        self.definingData()
 
     def successfulLoad(self):
         spliting_list = self.fName[0].split("/")
@@ -253,6 +358,56 @@ class Window (QtWidgets.QWidget):
             self.openPage = DataBrowser(self.singleColumn, self.isItSingleColumn)
         except AttributeError:
             self.failureLoad()
+    
+    def definingData(self):
+
+        if self.multipleColumnCB.isChecked() == False:
+            self.MULTIPLE_CHOICE = False
+            self.columns.setEnabled(False)
+            font.adjust_font(self.columns, "QListWidget", "Trebuchet MS", 
+                            font_size=12, bold=True, color="#B4B4B4", bg_color="#5F5F5F")
+            
+            if self.x_data.isChecked() == True:
+                self.X = self.singleColumn
+            else:
+                print("it was at this moment, he knew, he fucked up (defining data)")
+
+        elif self.multipleColumnCB.isChecked() == True:
+            self.MULTIPLE_CHOICE = True
+
+            self.columns.setEnabled(True)
+            font.adjust_font(self.columns, "QListWidget", "Trebuchet MS", 
+                            font_size=12, bold=True, color="#FFBD06", bg_color="#5F5F5F")
+
+            if self.x_data.isChecked() == True:
+                self.MULTIPLE_COLUMNS.append(self.columns.currentItem().text() )
+            else:
+                print("it was at this moment, he knew, he fucked up (defining data)")
+
+
+    def graphType(self):
+        if self.timeSeriesRB.isChecked() == True:
+            self.timeSeriesGraph()
+        elif self.barChartRB.isChecked() == True:
+            self.barGraph()
+        elif self.lineChartRB.isChecked() == True:
+            self.lineGraph()
+        else:
+            print("it was at this moment, he knew, he fucked up (graph type)")
+    
+    def lineGraph(self):
+        if self.MULTIPLE_CHOICE == False:
+            fig_lineGraph = plt.figure()
+            axes = fig_lineGraph.add_axes([0.1, 0.1, 0.8, 0.8])
+            axes.plot(self.X)
+            plt.show()
+        elif self.MULTIPLE_CHOICE == True:
+            self.MULTIPLE_X = self.mainDF[self.MULTIPLE_COLUMNS]
+            fig_lineGraph = plt.figure()
+            axes = fig_lineGraph.add_axes([0.1, 0.1, 0.8, 0.8])
+            axes.plot(self.MULTIPLE_X)
+            plt.show()
+
 
 class DataBrowser(QtWidgets.QWidget):
     def __init__(self, df, condition):
