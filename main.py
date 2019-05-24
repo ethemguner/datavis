@@ -18,11 +18,7 @@ class Window (QtWidgets.QWidget):
         self.MULTIPLE_COLUMNS = []
     
     def enabledWidgets(self):
-        self.x_data.setEnabled(False)
         self.multipleColumnCB.setEnabled(False)
-
-        font.adjust_font(self.x_data, "QRadioButton", "Trebuchet MS", 
-                        font_size=11, color="#908F8F")
 
         font.adjust_font(self.multipleColumnCB, "QCheckBox", "Trebuchet MS", 
                         font_size=11, color="#908F8F")
@@ -171,7 +167,6 @@ class Window (QtWidgets.QWidget):
         #DATA SETTINGS
         self.dataSettingsLabel  = QtWidgets.QLabel("\nDATA SETTINGS")
         self.columns            = QtWidgets.QListWidget()
-        self.x_data             = QtWidgets.QRadioButton("X Data")
         self.multipleColumnCB   = QtWidgets.QCheckBox("Multiple Column")
         self.columnsLabel       = QtWidgets.QLabel("Columns of Data")
         self.selectColButton    = QtWidgets.QPushButton("Select Column")
@@ -221,7 +216,6 @@ class Window (QtWidgets.QWidget):
         figSizeYHBox.addWidget(self.figSizeLabelY)
         figSizeYHBox.addWidget(self.figSizeY)
         dataSettHBox.addWidget(self.dataSettingsLabel)
-        lineRBHBox.addWidget(self.x_data)
         lineRBHBox.addWidget(self.multipleColumnCB)
         dataColLabHBox.addWidget(self.columnsLabel)
         columnListHBox.addWidget(self.columns)
@@ -264,21 +258,13 @@ class Window (QtWidgets.QWidget):
     
     def enableLineChartSelections(self):
         if self.lineChartRB.isChecked() == True:
-            self.x_data.setEnabled(True)
             self.multipleColumnCB.setEnabled(True)
-
-            font.adjust_font(self.x_data, "QRadioButton", "Trebuchet MS", 
-                            font_size=11, color="#FFBD06")
 
             font.adjust_font(self.multipleColumnCB, "QCheckBox", "Trebuchet MS", 
                             font_size=11, color="#FFBD06")
         
         elif self.lineChartRB.isChecked() == False:
-            self.x_data.setEnabled(False)
             self.multipleColumnCB.setEnabled(False)
-
-            font.adjust_font(self.x_data, "QRadioButton", "Trebuchet MS", 
-                            font_size=11, color="#908F8F")
 
             font.adjust_font(self.multipleColumnCB, "QCheckBox", "Trebuchet MS", 
                             font_size=11, color="#908F8F")
@@ -290,6 +276,10 @@ class Window (QtWidgets.QWidget):
         self.MULTIPLE_X = None
         self.singleColumn = None
         self.MULTIPLE_CHOICE = None
+        self.columns.setEnabled(True)
+        font.adjust_font(self.columns, "QListWidget", "Trebuchet MS", 
+                        font_size=12, bold=True, color="#FFBD06", bg_color="#5F5F5F")
+        self.multipleColumnCB.setChecked(False)
 
     def loadProcess(self):
         fileDialog = QtWidgets.QFileDialog()
@@ -363,27 +353,21 @@ class Window (QtWidgets.QWidget):
 
         if self.multipleColumnCB.isChecked() == False:
             self.MULTIPLE_CHOICE = False
+
+            self.singleColumn = self.mainDF['{}'.format(self.columns.currentItem().text() )]
+            self.X = self.singleColumn
+
             self.columns.setEnabled(False)
             font.adjust_font(self.columns, "QListWidget", "Trebuchet MS", 
                             font_size=12, bold=True, color="#B4B4B4", bg_color="#5F5F5F")
-            
-            if self.x_data.isChecked() == True:
-                self.X = self.singleColumn
-            else:
-                print("it was at this moment, he knew, he fucked up (defining data)")
 
         elif self.multipleColumnCB.isChecked() == True:
             self.MULTIPLE_CHOICE = True
+            self.MULTIPLE_COLUMNS.append(self.columns.currentItem().text() )
 
             self.columns.setEnabled(True)
             font.adjust_font(self.columns, "QListWidget", "Trebuchet MS", 
                             font_size=12, bold=True, color="#FFBD06", bg_color="#5F5F5F")
-
-            if self.x_data.isChecked() == True:
-                self.MULTIPLE_COLUMNS.append(self.columns.currentItem().text() )
-            else:
-                print("it was at this moment, he knew, he fucked up (defining data)")
-
 
     def graphType(self):
         if self.timeSeriesRB.isChecked() == True:
@@ -397,10 +381,16 @@ class Window (QtWidgets.QWidget):
     
     def lineGraph(self):
         if self.MULTIPLE_CHOICE == False:
-            fig_lineGraph = plt.figure()
+            fig_lineGraph = plt.figure(figsize=(float(self.figSizeX.text() ), 
+                                        float(self.figSizeY.text()) ), 
+                                        dpi=100)
             axes = fig_lineGraph.add_axes([0.1, 0.1, 0.8, 0.8])
             axes.plot(self.X)
+            axes.set_xlabel(str(self.xTitle.text() ))
+            axes.set_ylabel(str(self.yTitle.text() ))
+            axes.set_title(str(self.graphTitle.text() ))
             plt.show()
+
         elif self.MULTIPLE_CHOICE == True:
             self.MULTIPLE_X = self.mainDF[self.MULTIPLE_COLUMNS]
             fig_lineGraph = plt.figure()
