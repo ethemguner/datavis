@@ -16,6 +16,7 @@ class Window (QtWidgets.QWidget):
         self.enabledWidgets()
         self.SELECTED_COLUMNS = []
         self.MULTIPLE_COLUMNS = []
+        plt.style.use('ggplot')
     
     def enabledWidgets(self):
         self.multipleColumnCB.setEnabled(False)
@@ -48,93 +49,7 @@ class Window (QtWidgets.QWidget):
         self.rbGroup.addButton(self.barChartRB)
         self.rbGroup.addButton(self.lineChartRB)
 
-    def theme(self):
-        font.adjust_font(self.loadFile_Label, "QLabel", "Trebuchet MS", 
-                        font_size=14, bold=True, color="#0098FB")
 
-        font.adjust_font(self.loadFile_Button, "QPushButton", "Candara", 
-                        font_size=12, bold=True, color="#0098FB", 
-                        bg_color="black")
-
-        font.adjust_font(self.browseData_Button, "QPushButton", "Candara", 
-                        font_size=12, bold=True, color="#0098FB", 
-                        bg_color="black")
-
-        font.adjust_font(self.infoLabel, "QLabel", "Candara", 
-                        font_size=12, bold=True, color="black", 
-                        bg_color="#5F5F5F")
-
-        font.adjust_font(self.settingsLabel, "QLabel", "Trebuchet MS", 
-                        font_size=14, bold=True, color="#0098FB")
-
-        font.adjust_font(self.timeSeriesRB, "QRadioButton", "Trebuchet MS", 
-                        font_size=11, color="#FFBD06")
-
-        font.adjust_font(self.barChartRB, "QRadioButton", "Trebuchet MS", 
-                        font_size=11, color="#FFBD06")
-
-        font.adjust_font(self.lineChartRB, "QRadioButton", "Trebuchet MS", 
-                        font_size=11, color="#FFBD06")
-
-        font.adjust_font(self.trendCheckBox, "QCheckBox", "Trebuchet MS", 
-                        font_size=11, color="#FFBD06")
-
-        font.adjust_font(self.yTitleLabel, "QLabel", "Candara", 
-                        font_size=12, color="#3685FA")
-
-        font.adjust_font(self.xTitleLabel, "QLabel", "Candara", 
-                        font_size=12, color="#3685FA")
-
-        font.adjust_font(self.graphTitleLabel, "QLabel", "Candara", 
-                        font_size=12, color="#3685FA")
-
-        font.adjust_font(self.figSizeLabelX, "QLabel", "Candara", 
-                        font_size=12, color="#3685FA")
-
-        font.adjust_font(self.figSizeLabelY, "QLabel", "Candara", 
-                        font_size=12, color="#3685FA")
-
-        font.adjust_font(self.graphTitle, "QLineEdit", "Trebuchet MS", 
-                        font_size=10, color="#000000", bg_color="#9E9E9E")
-
-        font.adjust_font(self.xTitle, "QLineEdit", "Trebuchet MS", 
-                        font_size=10, color="#000000", bg_color="#9E9E9E")
-
-        font.adjust_font(self.yTitle, "QLineEdit", "Trebuchet MS", 
-                        font_size=10, color="#000000", bg_color="#9E9E9E")
-
-        font.adjust_font(self.figSizeX, "QLineEdit", "Trebuchet MS", 
-                        font_size=10, color="#000000", bg_color="#9E9E9E")
-
-        font.adjust_font(self.figSizeY, "QLineEdit", "Trebuchet MS", 
-                        font_size=10, color="#000000", bg_color="#9E9E9E")
-
-        font.adjust_font(self.dataSettingsLabel, "QLabel", "Trebuchet MS", 
-                        font_size=14, bold=True, color="#0098FB")
-
-        font.adjust_font(self.columns, "QListWidget", "Trebuchet MS", 
-                        font_size=12, bold=True, color="#FFBD06", bg_color="#5F5F5F")
-
-        font.adjust_font(self.columnsLabel, "QLabel", "Candara", 
-                        font_size=13, color="#DADADA")
-
-        font.adjust_font(self.selectColButton, "QPushButton", "Candara", 
-                        font_size=12, bold=True, color="#0098FB", 
-                        bg_color="black")
-
-        font.adjust_font(self.browseColumnButton, "QPushButton", "Candara", 
-                        font_size=12, bold=True, color="#0098FB", 
-                        bg_color="black")
-
-        font.adjust_font(self.clearSelectedButt, "QPushButton", "Candara", 
-                        font_size=12, bold=True, color="#0098FB", 
-                        bg_color="black")
-
-
-
-        font.adjust_font(self.printGraph, "QPushButton", "Candara", 
-                        font_size=12, bold=True, color="#0098FB", 
-                        bg_color="black")
     def ui(self):
         #Empty Label
         self.emptyLabel         = QtWidgets.QLabel("")
@@ -281,6 +196,11 @@ class Window (QtWidgets.QWidget):
                         font_size=12, bold=True, color="#FFBD06", bg_color="#5F5F5F")
         self.multipleColumnCB.setChecked(False)
 
+        self.infoLabel.setText("All variables have cleared successfuly!")
+        font.adjust_font(self.infoLabel, "QLabel", 
+                        "Franklin Gothic Book", font_size=12, color="#FFB200", 
+                        bg_color="#5F5F5F")
+
     def loadProcess(self):
         fileDialog = QtWidgets.QFileDialog()
         self.fName = fileDialog.getOpenFileName(None,'Load File')
@@ -360,6 +280,11 @@ class Window (QtWidgets.QWidget):
             self.columns.setEnabled(False)
             font.adjust_font(self.columns, "QListWidget", "Trebuchet MS", 
                             font_size=12, bold=True, color="#B4B4B4", bg_color="#5F5F5F")
+    
+            self.infoLabel.setText("Selected column: {}".format(self.columns.currentItem().text()) )
+            font.adjust_font(self.infoLabel, "QLabel", 
+                            "Franklin Gothic Book", font_size=12, color="#FFB200", 
+                            bg_color="#5F5F5F")
 
         elif self.multipleColumnCB.isChecked() == True:
             self.MULTIPLE_CHOICE = True
@@ -368,6 +293,11 @@ class Window (QtWidgets.QWidget):
             self.columns.setEnabled(True)
             font.adjust_font(self.columns, "QListWidget", "Trebuchet MS", 
                             font_size=12, bold=True, color="#FFBD06", bg_color="#5F5F5F")
+
+            self.infoLabel.setText("Selected columns: {}".format(self.MULTIPLE_COLUMNS) )
+            font.adjust_font(self.infoLabel, "QLabel", 
+                            "Franklin Gothic Book", font_size=12, color="#FFB200", 
+                            bg_color="#5F5F5F")
 
     def graphType(self):
         if self.timeSeriesRB.isChecked() == True:
@@ -378,27 +308,150 @@ class Window (QtWidgets.QWidget):
             self.lineGraph()
         else:
             print("it was at this moment, he knew, he fucked up (graph type)")
-    
+
+    def timeSeriesGraph(self):
+        data = pd.read_excel(self.fName[0],index_col='Date',parse_dates=True)
+        data[self.columns.currentItem().text()].plot()
+        plt.show()
+
     def lineGraph(self):
         if self.MULTIPLE_CHOICE == False:
-            fig_lineGraph = plt.figure(figsize=(float(self.figSizeX.text() ), 
-                                        float(self.figSizeY.text()) ), 
-                                        dpi=100)
-            axes = fig_lineGraph.add_axes([0.1, 0.1, 0.8, 0.8])
-            axes.plot(self.X)
-            axes.set_xlabel(str(self.xTitle.text() ))
-            axes.set_ylabel(str(self.yTitle.text() ))
-            axes.set_title(str(self.graphTitle.text() ))
-            plt.show()
+            try:
+                fig_lineGraph = plt.figure(figsize=(float(self.figSizeX.text() ), 
+                                            float(self.figSizeY.text()) ), 
+                                            dpi=100)
+                axes = fig_lineGraph.add_axes([0.1, 0.1, 0.8, 0.8])
+                axes.plot(self.X)
+                axes.set_xlabel(str(self.xTitle.text() ))
+                axes.set_ylabel(str(self.yTitle.text() ))
+                axes.set_title(str(self.graphTitle.text() ))
+                axes.grid(True)
+                plt.show()
+                
+            except ValueError:
+                fig_lineGraph = plt.figure()
+                axes = fig_lineGraph.add_axes([0.1, 0.1, 0.8, 0.8])
+                axes.plot(self.X)
+                axes.grid(True)
+                plt.show()
 
         elif self.MULTIPLE_CHOICE == True:
-            self.MULTIPLE_X = self.mainDF[self.MULTIPLE_COLUMNS]
-            fig_lineGraph = plt.figure()
-            axes = fig_lineGraph.add_axes([0.1, 0.1, 0.8, 0.8])
-            axes.plot(self.MULTIPLE_X)
-            plt.show()
+            try:
+                fig_lineGraph = plt.figure(figsize=(float(self.figSizeX.text() ), 
+                                            float(self.figSizeY.text()) ), 
+                                            dpi=100)
 
+                axes = fig_lineGraph.add_axes([0.1, 0.1, 0.8, 0.8])
 
+                for i in range(0, len(self.MULTIPLE_COLUMNS)):
+                    axes.plot(self.mainDF[self.MULTIPLE_COLUMNS[i]], label=self.MULTIPLE_COLUMNS[i])
+
+                axes.set_xlabel(str(self.xTitle.text() ))
+                axes.set_ylabel(str(self.yTitle.text() ))
+                axes.set_title(str(self.graphTitle.text() ))
+
+                axes.grid(True)
+                axes.legend()
+                plt.show()
+
+            except ValueError:
+                fig_lineGraph = plt.figure()
+
+                axes = fig_lineGraph.add_axes([0.1, 0.1, 0.8, 0.8])
+
+                for i in range(0, len(self.MULTIPLE_COLUMNS)):
+                    axes.plot(self.mainDF[self.MULTIPLE_COLUMNS[i]], label=self.MULTIPLE_COLUMNS[i])
+
+                axes.grid(True)
+                axes.legend()
+                plt.show()
+
+    def theme(self):
+        font.adjust_font(self.loadFile_Label, "QLabel", "Trebuchet MS", 
+                        font_size=14, bold=True, color="#0098FB")
+
+        font.adjust_font(self.loadFile_Button, "QPushButton", "Candara", 
+                        font_size=12, bold=True, color="#0098FB", 
+                        bg_color="black")
+
+        font.adjust_font(self.browseData_Button, "QPushButton", "Candara", 
+                        font_size=12, bold=True, color="#0098FB", 
+                        bg_color="black")
+
+        font.adjust_font(self.infoLabel, "QLabel", "Candara", 
+                        font_size=12, bold=True, color="black", 
+                        bg_color="#5F5F5F")
+
+        font.adjust_font(self.settingsLabel, "QLabel", "Trebuchet MS", 
+                        font_size=14, bold=True, color="#0098FB")
+
+        font.adjust_font(self.timeSeriesRB, "QRadioButton", "Trebuchet MS", 
+                        font_size=11, color="#FFBD06")
+
+        font.adjust_font(self.barChartRB, "QRadioButton", "Trebuchet MS", 
+                        font_size=11, color="#FFBD06")
+
+        font.adjust_font(self.lineChartRB, "QRadioButton", "Trebuchet MS", 
+                        font_size=11, color="#FFBD06")
+
+        font.adjust_font(self.trendCheckBox, "QCheckBox", "Trebuchet MS", 
+                        font_size=11, color="#FFBD06")
+
+        font.adjust_font(self.yTitleLabel, "QLabel", "Candara", 
+                        font_size=12, color="#3685FA")
+
+        font.adjust_font(self.xTitleLabel, "QLabel", "Candara", 
+                        font_size=12, color="#3685FA")
+
+        font.adjust_font(self.graphTitleLabel, "QLabel", "Candara", 
+                        font_size=12, color="#3685FA")
+
+        font.adjust_font(self.figSizeLabelX, "QLabel", "Candara", 
+                        font_size=12, color="#3685FA")
+
+        font.adjust_font(self.figSizeLabelY, "QLabel", "Candara", 
+                        font_size=12, color="#3685FA")
+
+        font.adjust_font(self.graphTitle, "QLineEdit", "Trebuchet MS", 
+                        font_size=10, color="#000000", bg_color="#9E9E9E")
+
+        font.adjust_font(self.xTitle, "QLineEdit", "Trebuchet MS", 
+                        font_size=10, color="#000000", bg_color="#9E9E9E")
+
+        font.adjust_font(self.yTitle, "QLineEdit", "Trebuchet MS", 
+                        font_size=10, color="#000000", bg_color="#9E9E9E")
+
+        font.adjust_font(self.figSizeX, "QLineEdit", "Trebuchet MS", 
+                        font_size=10, color="#000000", bg_color="#9E9E9E")
+
+        font.adjust_font(self.figSizeY, "QLineEdit", "Trebuchet MS", 
+                        font_size=10, color="#000000", bg_color="#9E9E9E")
+
+        font.adjust_font(self.dataSettingsLabel, "QLabel", "Trebuchet MS", 
+                        font_size=14, bold=True, color="#0098FB")
+
+        font.adjust_font(self.columns, "QListWidget", "Trebuchet MS", 
+                        font_size=12, bold=True, color="#FFBD06", bg_color="#5F5F5F")
+
+        font.adjust_font(self.columnsLabel, "QLabel", "Candara", 
+                        font_size=13, color="#DADADA")
+
+        font.adjust_font(self.selectColButton, "QPushButton", "Candara", 
+                        font_size=12, bold=True, color="#0098FB", 
+                        bg_color="black")
+
+        font.adjust_font(self.browseColumnButton, "QPushButton", "Candara", 
+                        font_size=12, bold=True, color="#0098FB", 
+                        bg_color="black")
+
+        font.adjust_font(self.clearSelectedButt, "QPushButton", "Candara", 
+                        font_size=12, bold=True, color="#0098FB", 
+                        bg_color="black")
+
+        font.adjust_font(self.printGraph, "QPushButton", "Candara", 
+                        font_size=12, bold=True, color="#0098FB", 
+                        bg_color="black")
+            
 class DataBrowser(QtWidgets.QWidget):
     def __init__(self, df, condition):
         super().__init__()
