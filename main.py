@@ -13,17 +13,38 @@ class Window (QtWidgets.QWidget):
         self.ui()
         self.theme()
         self.otherSettings()
-        self.enabledWidgets()
+        self.disableWidgets()
         self.SELECTED_COLUMNS = []
         self.MULTIPLE_COLUMNS = []
         plt.style.use('ggplot')
     
-    def enabledWidgets(self):
+    def disableWidgets(self):
+        #Line chart widgets
         self.multipleColumnCB.setEnabled(False)
 
         font.adjust_font(self.multipleColumnCB, "QCheckBox", "Trebuchet MS", 
                         font_size=11, color="#908F8F")
-        
+        #Time Series widgets
+        self.dateCheckBox.setEnabled(False)
+        self.dateLabel1.setEnabled(False)
+        self.datelabel2.setEnabled(False)
+        self.date1.setEnabled(False)
+        self.date2.setEnabled(False)
+        self.setDateButton.setEnabled(False)
+
+        font.adjust_font(self.date1, "QLineEdit", "Trebuchet MS", 
+                        font_size=10, color="#000000", bg_color="#9E9E9E")
+        font.adjust_font(self.date2, "QLineEdit", "Trebuchet MS", 
+                        font_size=10, color="#000000", bg_color="#9E9E9E")
+        font.adjust_font(self.dateLabel1, "QLabel", "Candara", 
+                        font_size=12, color="#908F8F")
+        font.adjust_font(self.datelabel2, "QLabel", "Candara", 
+                        font_size=12, color="#908F8F")
+        font.adjust_font(self.setDateButton, "QPushButton", "Candara", 
+                        font_size=12, bold=True, color="#908F8F", 
+                        bg_color="black")
+        font.adjust_font(self.dateCheckBox, "QCheckBox", "Candara", 
+                            bg_color="#908F8F")
     def otherSettings(self):
         self.loadFile_Button.setFixedWidth(250)
         self.browseData_Button.setFixedWidth(250)
@@ -63,8 +84,8 @@ class Window (QtWidgets.QWidget):
         #GRAPH SETTINGS
         self.settingsLabel      = QtWidgets.QLabel("\nGRAPH SETTINGS")
         self.timeSeriesRB       = QtWidgets.QRadioButton("Time Series")
-        self.barChartRB         = QtWidgets.QRadioButton("Bar chart")
-        self.lineChartRB        = QtWidgets.QRadioButton("Line Chart")
+        self.barChartRB         = QtWidgets.QRadioButton("Bar")
+        self.lineChartRB        = QtWidgets.QRadioButton("Line")
         self.trendCheckBox      = QtWidgets.QCheckBox("Show Trend")
         self.yTitleLabel        = QtWidgets.QLabel("Title of y Line\t")
         self.xTitleLabel        = QtWidgets.QLabel("Title of x Line\t")
@@ -78,37 +99,47 @@ class Window (QtWidgets.QWidget):
         self.figSizeY           = QtWidgets.QLineEdit()
         self.rbGroup            = QtWidgets.QButtonGroup()
 
-
         #DATA SETTINGS
         self.dataSettingsLabel  = QtWidgets.QLabel("\nDATA SETTINGS")
         self.columns            = QtWidgets.QListWidget()
+        self.LChartLabel        = QtWidgets.QLabel("Line Chart Settings")
         self.multipleColumnCB   = QtWidgets.QCheckBox("Multiple Column")
         self.columnsLabel       = QtWidgets.QLabel("Columns of Data")
         self.selectColButton    = QtWidgets.QPushButton("Select Column")
         self.browseColumnButton = QtWidgets.QPushButton("Browse Column")
         self.clearSelectedButt  = QtWidgets.QPushButton("Clear Selected Data")
+        self.tSeriesLabel       = QtWidgets.QLabel("Time Series Settings")
+        self.dateCheckBox       = QtWidgets.QCheckBox()
+        self.dateLabel1         = QtWidgets.QLabel("Set date between")
+        self.date1              = QtWidgets.QLineEdit()
+        self.datelabel2         = QtWidgets.QLabel("and")
+        self.date2              = QtWidgets.QLineEdit()
+        self.setDateButton      = QtWidgets.QPushButton("SET")
 
         #PRINT GRAPH
         self.printGraph         = QtWidgets.QPushButton("Create Graph")
         
-        vbox           = QtWidgets.QVBoxLayout()
-        hbox           = QtWidgets.QHBoxLayout()
-        buttonsLayout  = QtWidgets.QHBoxLayout()
-        infoHLayout    = QtWidgets.QHBoxLayout()
-        settingHBox    = QtWidgets.QHBoxLayout()
-        rbHBox         = QtWidgets.QHBoxLayout()
-        yTitlesHBox    = QtWidgets.QHBoxLayout()
-        xTitlesHBox    = QtWidgets.QHBoxLayout()
-        titleGraphHBox = QtWidgets.QHBoxLayout()
-        emptyHBox      = QtWidgets.QHBoxLayout()
-        dataSettHBox   = QtWidgets.QHBoxLayout()
-        dataColLabHBox = QtWidgets.QHBoxLayout()
-        columnListHBox = QtWidgets.QHBoxLayout()
-        buttonHBox     = QtWidgets.QHBoxLayout()
-        figSizeXHBox   = QtWidgets.QHBoxLayout()
-        figSizeYHBox   = QtWidgets.QHBoxLayout()
-        lineRBHBox     = QtWidgets.QHBoxLayout()
-        printGraphHBox = QtWidgets.QHBoxLayout()
+        vbox                = QtWidgets.QVBoxLayout()
+        hbox                = QtWidgets.QHBoxLayout()
+        buttonsLayout       = QtWidgets.QHBoxLayout()
+        infoHLayout         = QtWidgets.QHBoxLayout()
+        settingHBox         = QtWidgets.QHBoxLayout()
+        rbHBox              = QtWidgets.QHBoxLayout()
+        yTitlesHBox         = QtWidgets.QHBoxLayout()
+        xTitlesHBox         = QtWidgets.QHBoxLayout()
+        titleGraphHBox      = QtWidgets.QHBoxLayout()
+        emptyHBox           = QtWidgets.QHBoxLayout()
+        dataSettHBox        = QtWidgets.QHBoxLayout()
+        dataColLabHBox      = QtWidgets.QHBoxLayout()
+        columnListHBox      = QtWidgets.QHBoxLayout()
+        buttonHBox          = QtWidgets.QHBoxLayout()
+        figSizeXHBox        = QtWidgets.QHBoxLayout()
+        figSizeYHBox        = QtWidgets.QHBoxLayout()
+        lineRBHBox          = QtWidgets.QHBoxLayout()
+        printGraphHBox      = QtWidgets.QHBoxLayout()
+        LchartSettingsHBox  = QtWidgets.QHBoxLayout()
+        tSeriesLabelHBox    = QtWidgets.QHBoxLayout()
+        dateSettingsHBox    = QtWidgets.QHBoxLayout()
 
         vbox.addWidget(self.loadFile_Label)
         buttonsLayout.addWidget(self.loadFile_Button)
@@ -131,7 +162,16 @@ class Window (QtWidgets.QWidget):
         figSizeYHBox.addWidget(self.figSizeLabelY)
         figSizeYHBox.addWidget(self.figSizeY)
         dataSettHBox.addWidget(self.dataSettingsLabel)
+        LchartSettingsHBox.addWidget(self.LChartLabel)
         lineRBHBox.addWidget(self.multipleColumnCB)
+        emptyHBox.addWidget(self.emptyLabel)
+        tSeriesLabelHBox.addWidget(self.tSeriesLabel)
+        dateSettingsHBox.addWidget(self.dateCheckBox)
+        dateSettingsHBox.addWidget(self.dateLabel1)
+        dateSettingsHBox.addWidget(self.date1)
+        dateSettingsHBox.addWidget(self.datelabel2)
+        dateSettingsHBox.addWidget(self.date2)
+        dateSettingsHBox.addWidget(self.setDateButton)
         dataColLabHBox.addWidget(self.columnsLabel)
         columnListHBox.addWidget(self.columns)
         buttonHBox.addWidget(self.selectColButton)
@@ -150,7 +190,11 @@ class Window (QtWidgets.QWidget):
         vbox.addLayout(figSizeXHBox)
         vbox.addLayout(figSizeYHBox)
         vbox.addLayout(dataSettHBox)
+        vbox.addLayout(LchartSettingsHBox)
         vbox.addLayout(lineRBHBox)
+        vbox.addLayout(emptyHBox)
+        vbox.addLayout(tSeriesLabelHBox)
+        vbox.addLayout(dateSettingsHBox)
         vbox.addLayout(dataColLabHBox)
         vbox.addLayout(columnListHBox)
         vbox.addLayout(buttonHBox)
@@ -170,19 +214,109 @@ class Window (QtWidgets.QWidget):
         self.printGraph.clicked.connect(self.graphType)
         self.clearSelectedButt.clicked.connect(self.clearSelections)
         self.lineChartRB.toggled.connect(self.enableLineChartSelections)
-    
+        self.timeSeriesRB.toggled.connect(self.enableTimeSeriesSelections)
+        self.dateCheckBox.toggled.connect(self.enableTimesSeriesQLines)
+        self.setDateButton.clicked.connect(self.setDate)
+
+    def setDate(self):
+        if len(self.date1.text() ) == 0 or len(self.date2.text() ) == 0:
+            font.adjust_font(self.date1, "QLineEdit", "Trebuchet MS", 
+                            font_size=10, color="#000000", bg_color="#F77361")
+            font.adjust_font(self.date2, "QLineEdit", "Trebuchet MS", 
+                            font_size=10, color="#000000", bg_color="#F77361")
+
+            self.infoLabel.setText("Date couldn't set! Check the inputs please.")
+            font.adjust_font(self.infoLabel, "QLabel", 
+                            "Franklin Gothic Book", font_size=12, color="#FFB200", 
+                            bg_color="#5F5F5F")
+            
+        else:
+            self.first_date   = str(self.date1.text() )
+            self.second_date  = str(self.date2.text() )
+
+            font.adjust_font(self.date1, "QLineEdit", "Trebuchet MS", 
+                            font_size=10, color="#000000", bg_color="#74F263")
+            font.adjust_font(self.date2, "QLineEdit", "Trebuchet MS", 
+                            font_size=10, color="#000000", bg_color="#74F263")
+            
+            self.infoLabel.setText("Date has set successfully!")
+            font.adjust_font(self.infoLabel, "QLabel", 
+                            "Franklin Gothic Book", font_size=12, color="#FFB200", 
+                            bg_color="#5F5F5F")
+
+    def enableTimesSeriesQLines(self):
+        if self.dateCheckBox.isChecked() == True:
+            self.date1.setEnabled(True)
+            self.date2.setEnabled(True)
+            self.setDateButton.setEnabled(True)
+            font.adjust_font(self.date1, "QLineEdit", "Trebuchet MS", 
+                            font_size=10, color="#000000", bg_color="#F5F57F")
+            font.adjust_font(self.date2, "QLineEdit", "Trebuchet MS", 
+                            font_size=10, color="#000000", bg_color="#F5F57F")
+
+        elif self.dateCheckBox.isChecked() == False:
+            self.date1.setEnabled(False)
+            self.date2.setEnabled(False)
+            self.setDateButton.setEnabled(False)
+
+            font.adjust_font(self.date1, "QLineEdit", "Trebuchet MS", 
+                            font_size=10, color="#000000", bg_color="#9E9E9E")
+            font.adjust_font(self.date2, "QLineEdit", "Trebuchet MS", 
+                            font_size=10, color="#000000", bg_color="#9E9E9E")
+            
+            self.date1.setText("")
+            self.date2.setText("")
+
     def enableLineChartSelections(self):
         if self.lineChartRB.isChecked() == True:
             self.multipleColumnCB.setEnabled(True)
 
             font.adjust_font(self.multipleColumnCB, "QCheckBox", "Trebuchet MS", 
-                            font_size=11, color="#FFBD06")
+                            font_size=11, color="white")
         
         elif self.lineChartRB.isChecked() == False:
             self.multipleColumnCB.setEnabled(False)
 
             font.adjust_font(self.multipleColumnCB, "QCheckBox", "Trebuchet MS", 
                             font_size=11, color="#908F8F")
+
+    def enableTimeSeriesSelections(self):
+        if self.timeSeriesRB.isChecked() == True:
+            self.dateCheckBox.setEnabled(True)
+
+            font.adjust_font(self.date1, "QLineEdit", "Trebuchet MS", 
+                            font_size=10, color="#000000", bg_color="#9E9E9E")
+            font.adjust_font(self.date2, "QLineEdit", "Trebuchet MS", 
+                            font_size=10, color="#000000", bg_color="#9E9E9E")
+            font.adjust_font(self.dateLabel1, "QLabel", "Candara", 
+                            font_size=12, color="white")
+            font.adjust_font(self.datelabel2, "QLabel", "Candara", 
+                            font_size=12, color="white")
+            font.adjust_font(self.setDateButton, "QPushButton", "Candara", 
+                            font_size=12, bold=True, color="#0098FB", 
+                            bg_color="black")
+            font.adjust_font(self.dateCheckBox, "QCheckBox", "Candara", 
+                            bg_color="")
+
+        elif self.timeSeriesRB.isChecked() == False:
+            self.dateCheckBox.setEnabled(False)
+            self.date1.setEnabled(False)
+            self.date2.setEnabled(False)
+            self.setDateButton.setEnabled(False)
+
+            font.adjust_font(self.date1, "QLineEdit", "Trebuchet MS", 
+                            font_size=10, color="#000000", bg_color="#9E9E9E")
+            font.adjust_font(self.date2, "QLineEdit", "Trebuchet MS", 
+                            font_size=10, color="#000000", bg_color="#9E9E9E")
+            font.adjust_font(self.dateLabel1, "QLabel", "Candara", 
+                            font_size=12, color="#908F8F")
+            font.adjust_font(self.datelabel2, "QLabel", "Candara", 
+                            font_size=12, color="#908F8F")
+            font.adjust_font(self.setDateButton, "QPushButton", "Candara", 
+                            font_size=12, bold=True, color="#908F8F", 
+                            bg_color="black")
+            font.adjust_font(self.dateCheckBox, "QCheckBox", "Candara", 
+                            bg_color="#908F8F")
 
     def clearSelections(self):
         self.CURRENT_COLUMN = None
@@ -311,7 +445,11 @@ class Window (QtWidgets.QWidget):
 
     def timeSeriesGraph(self):
         data = pd.read_excel(self.fName[0],index_col='Date',parse_dates=True)
-        data[self.columns.currentItem().text()].plot()
+        data[self.columns.currentItem().text()].plot(figsize=(float(self.figSizeX.text() ), float(self.figSizeY.text()) ),
+                                                    xlim=[self.first_date, self.second_date])
+        plt.ylabel(self.yTitle.text() )
+        plt.xlabel(self.xTitle.text() )
+        plt.title(self.graphTitle.text() )
         plt.show()
 
     def lineGraph(self):
@@ -367,6 +505,7 @@ class Window (QtWidgets.QWidget):
                 plt.show()
 
     def theme(self):
+        #FILE SECTION
         font.adjust_font(self.loadFile_Label, "QLabel", "Trebuchet MS", 
                         font_size=14, bold=True, color="#0098FB")
 
@@ -382,6 +521,7 @@ class Window (QtWidgets.QWidget):
                         font_size=12, bold=True, color="black", 
                         bg_color="#5F5F5F")
 
+        #GRAPH SETTINGS FONT ADJUSTMENTS
         font.adjust_font(self.settingsLabel, "QLabel", "Trebuchet MS", 
                         font_size=14, bold=True, color="#0098FB")
 
@@ -427,6 +567,7 @@ class Window (QtWidgets.QWidget):
         font.adjust_font(self.figSizeY, "QLineEdit", "Trebuchet MS", 
                         font_size=10, color="#000000", bg_color="#9E9E9E")
 
+        #DATA SETTINGS FONT ADJUSTMENTS
         font.adjust_font(self.dataSettingsLabel, "QLabel", "Trebuchet MS", 
                         font_size=14, bold=True, color="#0098FB")
 
@@ -451,6 +592,29 @@ class Window (QtWidgets.QWidget):
         font.adjust_font(self.printGraph, "QPushButton", "Candara", 
                         font_size=12, bold=True, color="#0098FB", 
                         bg_color="black")
+
+        font.adjust_font(self.date1, "QLineEdit", "Trebuchet MS", 
+                        font_size=10, color="#000000", bg_color="#9E9E9E")
+
+        font.adjust_font(self.date2, "QLineEdit", "Trebuchet MS", 
+                        font_size=10, color="#000000", bg_color="#9E9E9E")
+
+        font.adjust_font(self.dateLabel1, "QLabel", "Candara", 
+                        font_size=12, color="white")
+
+        font.adjust_font(self.datelabel2, "QLabel", "Candara", 
+                        font_size=12, color="white")
+
+        font.adjust_font(self.setDateButton, "QPushButton", "Candara", 
+                        font_size=12, bold=True, color="#0098FB", 
+                        bg_color="black")
+
+        #SUB TITLES
+        font.adjust_font(self.LChartLabel, "QLabel", "Trebuchet MS", 
+                        font_size=11, color="#EEEE00")
+
+        font.adjust_font(self.tSeriesLabel, "QLabel", "Trebuchet MS", 
+                        font_size=11, color="#EEEE00")
             
 class DataBrowser(QtWidgets.QWidget):
     def __init__(self, df, condition):
