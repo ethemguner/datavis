@@ -1,5 +1,6 @@
 import pandas as pd 
-import matplotlib.pyplot as plt 
+import matplotlib.pyplot as plt
+import matplotlib.dates as dates
 import numpy as np 
 from PyQt5 import QtWidgets, QtCore, QtGui
 import sys
@@ -26,8 +27,6 @@ class Window (QtWidgets.QWidget):
                         font_size=11, color="#908F8F")
         #Time Series widgets
         self.dateCheckBox.setEnabled(False)
-        self.dateLabel1.setEnabled(False)
-        self.datelabel2.setEnabled(False)
         self.date1.setEnabled(False)
         self.date2.setEnabled(False)
         self.setDateButton.setEnabled(False)
@@ -65,6 +64,8 @@ class Window (QtWidgets.QWidget):
         self.figSizeX.setFixedWidth(250)
         self.figSizeY.setPlaceholderText("inch type")
         self.figSizeY.setFixedWidth(250)
+        self.date1.setPlaceholderText("yy-mm-dd")
+        self.date2.setPlaceholderText("yy-mm-dd")
 
         self.rbGroup.addButton(self.timeSeriesRB)
         self.rbGroup.addButton(self.barChartRB)
@@ -319,6 +320,7 @@ class Window (QtWidgets.QWidget):
                             bg_color="#908F8F")
 
     def clearSelections(self):
+        #Line chart
         self.CURRENT_COLUMN = None
         self.SELECTED_COLUMNS.clear()
         self.MULTIPLE_COLUMNS.clear()
@@ -334,6 +336,31 @@ class Window (QtWidgets.QWidget):
         font.adjust_font(self.infoLabel, "QLabel", 
                         "Franklin Gothic Book", font_size=12, color="#FFB200", 
                         bg_color="#5F5F5F")
+
+        #Time series
+        self.dateCheckBox.setEnabled(False)
+        self.date1.setEnabled(False)
+        self.date2.setEnabled(False)
+        self.setDateButton.setEnabled(False)
+
+        font.adjust_font(self.date1, "QLineEdit", "Trebuchet MS", 
+                        font_size=10, color="#000000", bg_color="#9E9E9E")
+        font.adjust_font(self.date2, "QLineEdit", "Trebuchet MS", 
+                        font_size=10, color="#000000", bg_color="#9E9E9E")
+        font.adjust_font(self.dateLabel1, "QLabel", "Candara", 
+                        font_size=12, color="#908F8F")
+        font.adjust_font(self.datelabel2, "QLabel", "Candara", 
+                        font_size=12, color="#908F8F")
+        font.adjust_font(self.setDateButton, "QPushButton", "Candara", 
+                        font_size=12, bold=True, color="#908F8F", 
+                        bg_color="black")
+        font.adjust_font(self.dateCheckBox, "QCheckBox", "Candara", 
+                            bg_color="#908F8F")
+        
+        self.first_date = None
+        self.second_date = None
+        self.date1.setText("")
+        self.date2.setText("")
 
     def loadProcess(self):
         fileDialog = QtWidgets.QFileDialog()
@@ -442,15 +469,27 @@ class Window (QtWidgets.QWidget):
             self.lineGraph()
         else:
             print("it was at this moment, he knew, he fucked up (graph type)")
-
+    def barGraph(self):
+        pass
+        
     def timeSeriesGraph(self):
-        data = pd.read_excel(self.fName[0],index_col='Date',parse_dates=True)
-        data[self.columns.currentItem().text()].plot(figsize=(float(self.figSizeX.text() ), float(self.figSizeY.text()) ),
-                                                    xlim=[self.first_date, self.second_date])
-        plt.ylabel(self.yTitle.text() )
-        plt.xlabel(self.xTitle.text() )
-        plt.title(self.graphTitle.text() )
-        plt.show()
+        
+        try:
+            data = pd.read_excel(self.fName[0],index_col='Date',parse_dates=True)
+            data[self.columns.currentItem().text()].plot(figsize=(float(self.figSizeX.text() ), float(self.figSizeY.text()) ),
+                                                        xlim=[self.first_date, self.second_date])
+            plt.ylabel(self.yTitle.text() )
+            plt.xlabel(self.xTitle.text() )
+            plt.title(self.graphTitle.text() )
+            plt.show()
+
+        except ValueError:
+            data = pd.read_excel(self.fName[0],index_col='Date',parse_dates=True)
+            data[self.columns.currentItem().text()].plot(xlim=[self.first_date, self.second_date])
+            plt.ylabel(self.yTitle.text() )
+            plt.xlabel(self.xTitle.text() )
+            plt.title(self.graphTitle.text() )
+            plt.show()
 
     def lineGraph(self):
         if self.MULTIPLE_CHOICE == False:
