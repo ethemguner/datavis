@@ -17,7 +17,9 @@ class Window (QtWidgets.QWidget):
         self.disableWidgets()
         self.SELECTED_COLUMNS = []
         self.MULTIPLE_COLUMNS = []
-        plt.style.use('ggplot')
+        self.first_date = "default"
+        self.second_date = "default"
+        plt.style.use('seaborn-darkgrid')
     
     def disableWidgets(self):
         #Line chart widgets
@@ -30,6 +32,8 @@ class Window (QtWidgets.QWidget):
         self.date1.setEnabled(False)
         self.date2.setEnabled(False)
         self.setDateButton.setEnabled(False)
+        self.trendNoice.setEnabled(False)
+        self.bollingerBandsCB.setEnabled(False)
 
         font.adjust_font(self.date1, "QLineEdit", "Trebuchet MS", 
                         font_size=10, color="#000000", bg_color="#9E9E9E")
@@ -44,6 +48,12 @@ class Window (QtWidgets.QWidget):
                         bg_color="black")
         font.adjust_font(self.dateCheckBox, "QCheckBox", "Candara", 
                             bg_color="#908F8F")
+        font.adjust_font(self.trendNoice, "QLineEdit", "Trebuchet MS", 
+                        font_size=10, color="#000000", bg_color="#9E9E9E")
+
+        font.adjust_font(self.bollingerBandsCB, "QCheckBox", "Trebuchet MS", 
+                        font_size=11, color="#908F8F")
+
     def otherSettings(self):
         self.loadFile_Button.setFixedWidth(250)
         self.browseData_Button.setFixedWidth(250)
@@ -51,6 +61,8 @@ class Window (QtWidgets.QWidget):
         self.browseColumnButton.setFixedWidth(140)
         self.clearSelectedButt.setFixedWidth(140)
         self.printGraph.setFixedWidth(140)
+        self.columns.setFixedWidth(350)
+        self.trendNoice.setFixedWidth(80)
         self.infoLabel.setAlignment(QtCore.Qt.AlignCenter)
         self.columnsLabel.setAlignment(QtCore.Qt.AlignCenter)
 
@@ -66,9 +78,9 @@ class Window (QtWidgets.QWidget):
         self.figSizeY.setFixedWidth(250)
         self.date1.setPlaceholderText("yy-mm-dd")
         self.date2.setPlaceholderText("yy-mm-dd")
+        self.trendNoice.setPlaceholderText("effect rate")
 
         self.rbGroup.addButton(self.timeSeriesRB)
-        self.rbGroup.addButton(self.barChartRB)
         self.rbGroup.addButton(self.lineChartRB)
 
 
@@ -85,7 +97,6 @@ class Window (QtWidgets.QWidget):
         #GRAPH SETTINGS
         self.settingsLabel      = QtWidgets.QLabel("\nGRAPH SETTINGS")
         self.timeSeriesRB       = QtWidgets.QRadioButton("Time Series")
-        self.barChartRB         = QtWidgets.QRadioButton("Bar")
         self.lineChartRB        = QtWidgets.QRadioButton("Line")
         self.trendCheckBox      = QtWidgets.QCheckBox("Show Trend")
         self.yTitleLabel        = QtWidgets.QLabel("Title of y Line\t")
@@ -99,6 +110,8 @@ class Window (QtWidgets.QWidget):
         self.figSizeX           = QtWidgets.QLineEdit()
         self.figSizeY           = QtWidgets.QLineEdit()
         self.rbGroup            = QtWidgets.QButtonGroup()
+        self.trendNoice         = QtWidgets.QLineEdit()
+        self.bollingerBandsCB    = QtWidgets.QCheckBox("Bollinger Bands")
 
         #DATA SETTINGS
         self.dataSettingsLabel  = QtWidgets.QLabel("\nDATA SETTINGS")
@@ -148,9 +161,10 @@ class Window (QtWidgets.QWidget):
         infoHLayout.addWidget(self.infoLabel)
         settingHBox.addWidget(self.settingsLabel)
         rbHBox.addWidget(self.timeSeriesRB)
-        rbHBox.addWidget(self.barChartRB)
         rbHBox.addWidget(self.lineChartRB)
         rbHBox.addWidget(self.trendCheckBox)
+        rbHBox.addWidget(self.trendNoice)
+        rbHBox.addWidget(self.bollingerBandsCB)
         emptyHBox.addWidget(self.emptyLabel)
         xTitlesHBox.addWidget(self.xTitleLabel)
         xTitlesHBox.addWidget(self.xTitle)
@@ -218,7 +232,30 @@ class Window (QtWidgets.QWidget):
         self.timeSeriesRB.toggled.connect(self.enableTimeSeriesSelections)
         self.dateCheckBox.toggled.connect(self.enableTimesSeriesQLines)
         self.setDateButton.clicked.connect(self.setDate)
+        self.trendCheckBox.toggled.connect(self.enableTrendWidgets)
 
+    def enableTrendWidgets(self):
+        if self.trendCheckBox.isChecked() == True:
+            self.trendNoice.setEnabled(True)
+            self.bollingerBandsCB.setEnabled(True)
+
+            font.adjust_font(self.trendNoice, "QLineEdit", "Trebuchet MS", 
+                            font_size=10, color="#000000", bg_color="#F5F57F")
+
+            font.adjust_font(self.bollingerBandsCB, "QCheckBox", "Trebuchet MS", 
+                        font_size=11, color="white")
+        else:
+            self.trendNoice.setEnabled(False)
+            self.bollingerBandsCB.setEnabled(False)
+            self.trendNoice.setText("")
+            self.bollingerBandsCB.setChecked(False)
+
+            font.adjust_font(self.trendNoice, "QLineEdit", "Trebuchet MS", 
+                            font_size=10, color="#000000", bg_color="#9E9E9E")
+
+            font.adjust_font(self.bollingerBandsCB, "QCheckBox", "Trebuchet MS", 
+                        font_size=11, color="#908F8F")
+            
     def setDate(self):
         if len(self.date1.text() ) == 0 or len(self.date2.text() ) == 0:
             font.adjust_font(self.date1, "QLineEdit", "Trebuchet MS", 
@@ -328,6 +365,9 @@ class Window (QtWidgets.QWidget):
         self.singleColumn = None
         self.MULTIPLE_CHOICE = None
         self.columns.setEnabled(True)
+        self.first_date = "default"
+        self.second_date = "default"
+        
         font.adjust_font(self.columns, "QListWidget", "Trebuchet MS", 
                         font_size=12, bold=True, color="#FFBD06", bg_color="#5F5F5F")
         self.multipleColumnCB.setChecked(False)
@@ -463,33 +503,85 @@ class Window (QtWidgets.QWidget):
     def graphType(self):
         if self.timeSeriesRB.isChecked() == True:
             self.timeSeriesGraph()
-        elif self.barChartRB.isChecked() == True:
-            self.barGraph()
         elif self.lineChartRB.isChecked() == True:
             self.lineGraph()
         else:
             print("it was at this moment, he knew, he fucked up (graph type)")
-    def barGraph(self):
-        pass
         
     def timeSeriesGraph(self):
-        
-        try:
-            data = pd.read_excel(self.fName[0],index_col='Date',parse_dates=True)
-            data[self.columns.currentItem().text()].plot(figsize=(float(self.figSizeX.text() ), float(self.figSizeY.text()) ),
+        """
+        data['{}: 90 Day Mean'.format(selectedValues)] = data['{}'.format(selectedValues)].rolling(window=90).mean()
+
+        data[[selectedValues, '{}: 90 Day Mean'.format(selectedValues)]].plot(figsize=(float(self.figSizeX.text() ), 
+                                                        float(self.figSizeY.text()) ),
                                                         xlim=[self.first_date, self.second_date])
-            plt.ylabel(self.yTitle.text() )
-            plt.xlabel(self.xTitle.text() )
-            plt.title(self.graphTitle.text() )
-            plt.show()
+        """
+        try:
+            if self.trendCheckBox.isChecked() == False:
+                print("no trend!")
+                if len(self.first_date) == 10 and len(self.second_date) == 10:
+                    selectedValues = self.columns.currentItem().text()
+                    data = pd.read_excel(self.fName[0],index_col='Date',parse_dates=True)
+                    data[selectedValues].plot(figsize=(float(self.figSizeX.text() ), float(self.figSizeY.text()) ),
+                                                                    xlim=[self.first_date, self.second_date])
+                    plt.ylabel(self.yTitle.text() )
+                    plt.xlabel(self.xTitle.text() )
+                    plt.title(self.graphTitle.text() )
+                    plt.show()
+                else:
+                    selectedValues = self.columns.currentItem().text()
+                    data = pd.read_excel(self.fName[0],index_col='Date',parse_dates=True)
+                    data[selectedValues].plot(figsize=(float(self.figSizeX.text() ), float(self.figSizeY.text()) ))
+
+                    plt.ylabel(self.yTitle.text() )
+                    plt.xlabel(self.xTitle.text() )
+                    plt.title(self.graphTitle.text() )
+                    plt.show()
+
+            elif self.trendCheckBox.isChecked() == True and self.bollingerBandsCB.isChecked() == False:
+                print("trendcheck box true!")
+                selectedValues = self.columns.currentItem().text()
+                data = pd.read_excel(self.fName[0],index_col='Date',parse_dates=True)
+                data['{} Trend'.format(selectedValues)] = data['{}'.format(selectedValues)].rolling(window=int(self.trendNoice.text()) ).mean()
+
+                data[[selectedValues, '{} Trend'.format(selectedValues)]].plot(figsize=(float(self.figSizeX.text() ), 
+                                                                float(self.figSizeY.text()) ),
+                                                                xlim=[self.first_date, self.second_date])
+                plt.ylabel(self.yTitle.text() )
+                plt.xlabel(self.xTitle.text() )
+                plt.title(self.graphTitle.text() )
+                plt.show()
+            elif self.trendCheckBox.isChecked() == True and self.bollingerBandsCB.isChecked() == True:
+                print("both true!")
+                selectedValues = self.columns.currentItem().text()
+                data = pd.read_excel(self.fName[0],index_col='Date',parse_dates=True)
+                data['{} Trend'.format(selectedValues)] = data['{}'.format(selectedValues)].rolling(window=int(self.trendNoice.text()) ).mean()
+                data['Upper'] = data['{} Trend'.format(selectedValues)] + 2*data['{}'.format(selectedValues)].rolling(window=int(self.trendNoice.text()) ).std()
+                data['Lower'] = data['{} Trend'.format(selectedValues)] - 2*data['{}'.format(selectedValues)].rolling(window=int(self.trendNoice.text()) ).std()
+
+                data[[selectedValues, '{} Trend'.format(selectedValues), 'Upper', 'Lower']].plot(figsize=(float(self.figSizeX.text() ), 
+                                                                float(self.figSizeY.text()) ),
+                                                                xlim=[self.first_date, self.second_date])
+                plt.ylabel(self.yTitle.text() )
+                plt.xlabel(self.xTitle.text() )
+                plt.title(self.graphTitle.text() )
+                plt.show()
 
         except ValueError:
-            data = pd.read_excel(self.fName[0],index_col='Date',parse_dates=True)
-            data[self.columns.currentItem().text()].plot(xlim=[self.first_date, self.second_date])
-            plt.ylabel(self.yTitle.text() )
-            plt.xlabel(self.xTitle.text() )
-            plt.title(self.graphTitle.text() )
-            plt.show()
+            if len(self.first_date) == 10 and len(self.second_date) == 10:
+                data = pd.read_excel(self.fName[0],index_col='Date',parse_dates=True)
+                data[self.columns.currentItem().text()].plot(xlim=[self.first_date, self.second_date])
+                plt.ylabel(self.yTitle.text() )
+                plt.xlabel(self.xTitle.text() )
+                plt.title(self.graphTitle.text() )
+                plt.show()
+            else:
+                data = pd.read_excel(self.fName[0],index_col='Date',parse_dates=True)
+                data[self.columns.currentItem().text()].plot()
+                plt.ylabel(self.yTitle.text() )
+                plt.xlabel(self.xTitle.text() )
+                plt.title(self.graphTitle.text() )
+                plt.show()
 
     def lineGraph(self):
         if self.MULTIPLE_CHOICE == False:
@@ -565,9 +657,6 @@ class Window (QtWidgets.QWidget):
                         font_size=14, bold=True, color="#0098FB")
 
         font.adjust_font(self.timeSeriesRB, "QRadioButton", "Trebuchet MS", 
-                        font_size=11, color="#FFBD06")
-
-        font.adjust_font(self.barChartRB, "QRadioButton", "Trebuchet MS", 
                         font_size=11, color="#FFBD06")
 
         font.adjust_font(self.lineChartRB, "QRadioButton", "Trebuchet MS", 
