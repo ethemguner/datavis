@@ -15,12 +15,28 @@ class Window (QtWidgets.QWidget):
         self.theme()
         self.otherSettings()
         self.disableWidgets()
+        self.setAllToolTips()
         self.SELECTED_COLUMNS = []
         self.MULTIPLE_COLUMNS = []
         self.first_date = "default"
         self.second_date = "default"
         plt.style.use('seaborn-darkgrid')
-    
+        self.setWindowTitle("DataVis")
+        self.setWindowIcon(QtGui.QIcon('.\\app_photos\\window_icon.png'))
+        self.setGeometry(0, 0, 550, 850)
+        self.centerOnScreen()
+
+    def centerOnScreen(self):
+        resolution = QtWidgets.QDesktopWidget().screenGeometry()
+        print("Width:", resolution.width())
+        print("Height:", resolution.height())
+        self.move((resolution.width() / 2) - (self.frameSize().width() / 2),
+                  (resolution.height() / 2) - (self.frameSize().height() / 2))
+
+    def setAllToolTips(self):
+        self.loadFile_Button.setToolTip('<b>%s</b><br><img src="%s">' % ("Tool Tip 1", ".\\app_photos\\load_file_info.png"))
+        self.browseData_Button.setToolTip('<b>%s</b><br><img src="%s">' % ("Tool Tip 2", ".\\app_photos\\Browse_data_info.png"))
+
     def disableWidgets(self):
         #Line chart widgets
         self.multipleColumnCB.setEnabled(False)
@@ -243,7 +259,7 @@ class Window (QtWidgets.QWidget):
                             font_size=10, color="#000000", bg_color="#F5F57F")
 
             font.adjust_font(self.bollingerBandsCB, "QCheckBox", "Trebuchet MS", 
-                        font_size=11, color="white")
+                        font_size=11, color="#61D9F7")
         else:
             self.trendNoice.setEnabled(False)
             self.bollingerBandsCB.setEnabled(False)
@@ -367,7 +383,7 @@ class Window (QtWidgets.QWidget):
         self.columns.setEnabled(True)
         self.first_date = "default"
         self.second_date = "default"
-        
+         
         font.adjust_font(self.columns, "QListWidget", "Trebuchet MS", 
                         font_size=12, bold=True, color="#FFBD06", bg_color="#5F5F5F")
         self.multipleColumnCB.setChecked(False)
@@ -789,8 +805,8 @@ class DataBrowser(QtWidgets.QWidget):
 
 app = QtWidgets.QApplication(sys.argv)
 window = Window()
-window.move(400, 120)
-window.setFixedSize(550, 850)
+#window.move(400, 80)
+#window.setFixedSize(550, 850)
 app.setStyle("Fusion")
 window.setStyleSheet("Window {background : #505050;}")
 sys.exit(app.exec_())
