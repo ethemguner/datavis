@@ -434,7 +434,7 @@ class Window (QtWidgets.QWidget):
 
         try:
             if self.fName[0]:
-                data = pd.read_excel(self.fName[0])
+                data = pd.read_csv(self.fName[0])
                 self.mainDF = pd.DataFrame(data)
                 self.successfulLoad()
                 self.listColumns()
@@ -533,7 +533,7 @@ class Window (QtWidgets.QWidget):
                 if len(self.first_date) == 10 and len(self.second_date) == 10:
                     
                     selectedValues = self.columns.currentItem().text()
-                    data = pd.read_excel(self.fName[0],index_col='Date',parse_dates=True)
+                    data = pd.read_csv(self.fName[0],index_col='Date',parse_dates=True)
                     data[selectedValues].plot(figsize=(float(self.figSizeX.text() ), float(self.figSizeY.text()) ),
                                                                     xlim=[self.first_date, self.second_date])
                     plt.ylabel(self.yTitle.text() )
@@ -543,7 +543,7 @@ class Window (QtWidgets.QWidget):
                     
                 else:
                     selectedValues = self.columns.currentItem().text()
-                    data = pd.read_excel(self.fName[0],index_col='Date',parse_dates=True)
+                    data = pd.read_csv(self.fName[0],index_col='Date',parse_dates=True)
                     data[selectedValues].plot(figsize=(float(self.figSizeX.text() ), float(self.figSizeY.text()) ))
 
                     plt.ylabel(self.yTitle.text() )
@@ -560,7 +560,7 @@ class Window (QtWidgets.QWidget):
                     font.adjust_font(self.trendNoice, "QLineEdit", bg_color="#74F263")
 
                 selectedValues = self.columns.currentItem().text()
-                data = pd.read_excel(self.fName[0],index_col='Date',parse_dates=True)
+                data = pd.read_csv(self.fName[0],index_col='Date',parse_dates=True)
                 data['{} Trend'.format(selectedValues)] = data['{}'.format(selectedValues)].rolling(window=int(self.trendNoice.text()) ).mean()
                 
                 if len(self.first_date) > 7 or len(self.second_date) > 7:
@@ -583,7 +583,7 @@ class Window (QtWidgets.QWidget):
                     font.adjust_font(self.trendNoice, "QLineEdit", bg_color="#74F263")
                 
                 selectedValues = self.columns.currentItem().text()
-                data = pd.read_excel(self.fName[0],index_col='Date',parse_dates=True)
+                data = pd.read_csv(self.fName[0],index_col='Date',parse_dates=True)
                 data['{} Trend'.format(selectedValues)] = data['{}'.format(selectedValues)].rolling(window=int(self.trendNoice.text()) ).mean()
                 data['Upper'] = data['{} Trend'.format(selectedValues)] + 2*data['{}'.format(selectedValues)].rolling(window=int(self.trendNoice.text()) ).std()
                 data['Lower'] = data['{} Trend'.format(selectedValues)] - 2*data['{}'.format(selectedValues)].rolling(window=int(self.trendNoice.text()) ).std()
@@ -602,14 +602,14 @@ class Window (QtWidgets.QWidget):
 
         except ValueError:
             if len(self.first_date) == 10 and len(self.second_date) == 10:
-                data = pd.read_excel(self.fName[0],index_col='Date',parse_dates=True)
+                data = pd.read_csv(self.fName[0],index_col='Date',parse_dates=True)
                 data[self.columns.currentItem().text()].plot(xlim=[self.first_date, self.second_date])
                 plt.ylabel(self.yTitle.text() )
                 plt.xlabel(self.xTitle.text() )
                 plt.title(self.graphTitle.text() )
                 plt.show()
             else:
-                data = pd.read_excel(self.fName[0],index_col='Date',parse_dates=True)
+                data = pd.read_csv(self.fName[0],index_col='Date',parse_dates=True)
                 data[self.columns.currentItem().text()].plot()
                 plt.ylabel(self.yTitle.text() )
                 plt.xlabel(self.xTitle.text() )
