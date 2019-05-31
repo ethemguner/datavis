@@ -25,6 +25,9 @@ class Window (QtWidgets.QWidget):
         self.setWindowIcon(QtGui.QIcon('.\\app_photos\\window_icon.png'))
         self.setGeometry(0, 0, 550, 850)
         self.centerOnScreen()
+        self.figSizeX.setText("13") 
+        self.figSizeY.setText("6")
+        self.MULTIPLE_CHOICE = False
 
     def centerOnScreen(self):
         resolution = QtWidgets.QDesktopWidget().screenGeometry()
@@ -39,10 +42,7 @@ class Window (QtWidgets.QWidget):
 
     def disableWidgets(self):
         #Line chart widgets
-        self.multipleColumnCB.setEnabled(False)
-
-        font.adjust_font(self.multipleColumnCB, "QCheckBox", "Trebuchet MS", 
-                        font_size=11, color="#908F8F")
+        self.multipleColCB.setEnabled(False)
         #Time Series widgets
         self.dateCheckBox.setEnabled(False)
         self.date1.setEnabled(False)
@@ -59,6 +59,10 @@ class Window (QtWidgets.QWidget):
                         font_size=12, color="#908F8F")
         font.adjust_font(self.datelabel2, "QLabel", "Candara", 
                         font_size=12, color="#908F8F")
+        font.adjust_font(self.multipleColCBLabel, "QLabel", "Candara", 
+                        font_size=12, color="#908F8F")
+        font.adjust_font(self.multipleColCB, "QCheckBox", "Candara",
+                            bg_color="#908F8F")
         font.adjust_font(self.setDateButton, "QPushButton", "Candara", 
                         font_size=12, bold=True, color="#908F8F", 
                         bg_color="black")
@@ -127,13 +131,14 @@ class Window (QtWidgets.QWidget):
         self.figSizeY           = QtWidgets.QLineEdit()
         self.rbGroup            = QtWidgets.QButtonGroup()
         self.trendNoice         = QtWidgets.QLineEdit()
-        self.bollingerBandsCB    = QtWidgets.QCheckBox("Bollinger Bands")
+        self.bollingerBandsCB   = QtWidgets.QCheckBox("Bollinger Bands")
 
         #DATA SETTINGS
         self.dataSettingsLabel  = QtWidgets.QLabel("\nDATA SETTINGS")
         self.columns            = QtWidgets.QListWidget()
         self.LChartLabel        = QtWidgets.QLabel("Line Chart Settings")
-        self.multipleColumnCB   = QtWidgets.QCheckBox("Multiple Column")
+        self.multipleColCB      = QtWidgets.QCheckBox()
+        self.multipleColCBLabel = QtWidgets.QLabel("Multiple Columns")
         self.columnsLabel       = QtWidgets.QLabel("Columns of Data")
         self.selectColButton    = QtWidgets.QPushButton("Select Column")
         self.browseColumnButton = QtWidgets.QPushButton("Browse Column")
@@ -176,8 +181,8 @@ class Window (QtWidgets.QWidget):
         buttonsLayout.addWidget(self.browseData_Button)
         infoHLayout.addWidget(self.infoLabel)
         settingHBox.addWidget(self.settingsLabel)
-        rbHBox.addWidget(self.timeSeriesRB)
         rbHBox.addWidget(self.lineChartRB)
+        rbHBox.addWidget(self.timeSeriesRB)
         rbHBox.addWidget(self.trendCheckBox)
         rbHBox.addWidget(self.trendNoice)
         rbHBox.addWidget(self.bollingerBandsCB)
@@ -194,7 +199,9 @@ class Window (QtWidgets.QWidget):
         figSizeYHBox.addWidget(self.figSizeY)
         dataSettHBox.addWidget(self.dataSettingsLabel)
         LchartSettingsHBox.addWidget(self.LChartLabel)
-        lineRBHBox.addWidget(self.multipleColumnCB)
+        lineRBHBox.addWidget(self.multipleColCB)
+        lineRBHBox.addWidget(self.multipleColCBLabel)
+        lineRBHBox.addStretch()
         emptyHBox.addWidget(self.emptyLabel)
         tSeriesLabelHBox.addWidget(self.tSeriesLabel)
         dateSettingsHBox.addWidget(self.dateCheckBox)
@@ -323,16 +330,18 @@ class Window (QtWidgets.QWidget):
 
     def enableLineChartSelections(self):
         if self.lineChartRB.isChecked() == True:
-            self.multipleColumnCB.setEnabled(True)
+            self.multipleColCB.setEnabled(True)
 
-            font.adjust_font(self.multipleColumnCB, "QCheckBox", "Trebuchet MS", 
-                            font_size=11, color="white")
-        
+            font.adjust_font(self.multipleColCB, "QCheckBox", bg_color="")
+            font.adjust_font(self.multipleColCBLabel, "QLabel", "Candara", 
+                            font_size=12, color="white")
+
         elif self.lineChartRB.isChecked() == False:
-            self.multipleColumnCB.setEnabled(False)
+            self.multipleColCB.setEnabled(False)
 
-            font.adjust_font(self.multipleColumnCB, "QCheckBox", "Trebuchet MS", 
-                            font_size=11, color="#908F8F")
+            font.adjust_font(self.multipleColCB, "QCheckBox", bg_color="#908F8F")
+            font.adjust_font(self.multipleColCBLabel, "QLabel", "Candara", 
+                            font_size=12, color="#908F8F")
 
     def enableTimeSeriesSelections(self):
         if self.timeSeriesRB.isChecked() == True:
@@ -379,14 +388,14 @@ class Window (QtWidgets.QWidget):
         self.MULTIPLE_COLUMNS.clear()
         self.MULTIPLE_X = None
         self.singleColumn = None
-        self.MULTIPLE_CHOICE = None
+        self.MULTIPLE_CHOICE = False
         self.columns.setEnabled(True)
         self.first_date = "default"
         self.second_date = "default"
          
         font.adjust_font(self.columns, "QListWidget", "Trebuchet MS", 
-                        font_size=12, bold=True, color="#FFBD06", bg_color="#5F5F5F")
-        self.multipleColumnCB.setChecked(False)
+                        font_size=12, color="#FFBD06", bg_color="#5F5F5F")
+        self.multipleColCB.setChecked(False)
 
         self.infoLabel.setText("All variables have cleared successfuly!")
         font.adjust_font(self.infoLabel, "QLabel", 
@@ -417,6 +426,7 @@ class Window (QtWidgets.QWidget):
         self.second_date = None
         self.date1.setText("")
         self.date2.setText("")
+        self.dateCheckBox.setChecked(False)
 
     def loadProcess(self):
         fileDialog = QtWidgets.QFileDialog()
@@ -488,22 +498,7 @@ class Window (QtWidgets.QWidget):
     
     def definingData(self):
 
-        if self.multipleColumnCB.isChecked() == False:
-            self.MULTIPLE_CHOICE = False
-
-            self.singleColumn = self.mainDF['{}'.format(self.columns.currentItem().text() )]
-            self.X = self.singleColumn
-
-            self.columns.setEnabled(False)
-            font.adjust_font(self.columns, "QListWidget", "Trebuchet MS", 
-                            font_size=12, bold=True, color="#B4B4B4", bg_color="#5F5F5F")
-    
-            self.infoLabel.setText("Selected column: {}".format(self.columns.currentItem().text()) )
-            font.adjust_font(self.infoLabel, "QLabel", 
-                            "Franklin Gothic Book", font_size=12, color="#FFB200", 
-                            bg_color="#5F5F5F")
-
-        elif self.multipleColumnCB.isChecked() == True:
+        if self.multipleColCB.isChecked() == True:
             self.MULTIPLE_CHOICE = True
             self.MULTIPLE_COLUMNS.append(self.columns.currentItem().text() )
 
@@ -536,6 +531,7 @@ class Window (QtWidgets.QWidget):
             if self.trendCheckBox.isChecked() == False:
                 print("no trend!")
                 if len(self.first_date) == 10 and len(self.second_date) == 10:
+                    
                     selectedValues = self.columns.currentItem().text()
                     data = pd.read_excel(self.fName[0],index_col='Date',parse_dates=True)
                     data[selectedValues].plot(figsize=(float(self.figSizeX.text() ), float(self.figSizeY.text()) ),
@@ -544,6 +540,7 @@ class Window (QtWidgets.QWidget):
                     plt.xlabel(self.xTitle.text() )
                     plt.title(self.graphTitle.text() )
                     plt.show()
+                    
                 else:
                     selectedValues = self.columns.currentItem().text()
                     data = pd.read_excel(self.fName[0],index_col='Date',parse_dates=True)
@@ -556,28 +553,48 @@ class Window (QtWidgets.QWidget):
 
             elif self.trendCheckBox.isChecked() == True and self.bollingerBandsCB.isChecked() == False:
                 print("trendcheck box true!")
+
+                if len(self.trendNoice.text() ) == 00:
+                    font.adjust_font(self.trendNoice, "QLineEdit", bg_color="#F77561")
+                else:
+                    font.adjust_font(self.trendNoice, "QLineEdit", bg_color="#74F263")
+
                 selectedValues = self.columns.currentItem().text()
                 data = pd.read_excel(self.fName[0],index_col='Date',parse_dates=True)
                 data['{} Trend'.format(selectedValues)] = data['{}'.format(selectedValues)].rolling(window=int(self.trendNoice.text()) ).mean()
-
-                data[[selectedValues, '{} Trend'.format(selectedValues)]].plot(figsize=(float(self.figSizeX.text() ), 
-                                                                float(self.figSizeY.text()) ),
-                                                                xlim=[self.first_date, self.second_date])
+                
+                if len(self.first_date) > 7 or len(self.second_date) > 7:
+                    data[[selectedValues, '{} Trend'.format(selectedValues)]].plot(figsize=(float(self.figSizeX.text() ), 
+                                                                    float(self.figSizeY.text()) ),
+                                                                    xlim=[self.first_date, self.second_date])
+                else:
+                    data[[selectedValues, '{} Trend'.format(selectedValues)]].plot(figsize=(float(self.figSizeX.text() ), 
+                                                                    float(self.figSizeY.text()) ) )
                 plt.ylabel(self.yTitle.text() )
                 plt.xlabel(self.xTitle.text() )
                 plt.title(self.graphTitle.text() )
                 plt.show()
+
+
             elif self.trendCheckBox.isChecked() == True and self.bollingerBandsCB.isChecked() == True:
-                print("both true!")
+                if len(self.trendNoice.text() ) == 00:
+                    font.adjust_font(self.trendNoice, "QLineEdit", bg_color="#F77561")
+                else:
+                    font.adjust_font(self.trendNoice, "QLineEdit", bg_color="#74F263")
+                
                 selectedValues = self.columns.currentItem().text()
                 data = pd.read_excel(self.fName[0],index_col='Date',parse_dates=True)
                 data['{} Trend'.format(selectedValues)] = data['{}'.format(selectedValues)].rolling(window=int(self.trendNoice.text()) ).mean()
                 data['Upper'] = data['{} Trend'.format(selectedValues)] + 2*data['{}'.format(selectedValues)].rolling(window=int(self.trendNoice.text()) ).std()
                 data['Lower'] = data['{} Trend'.format(selectedValues)] - 2*data['{}'.format(selectedValues)].rolling(window=int(self.trendNoice.text()) ).std()
-
-                data[[selectedValues, '{} Trend'.format(selectedValues), 'Upper', 'Lower']].plot(figsize=(float(self.figSizeX.text() ), 
-                                                                float(self.figSizeY.text()) ),
-                                                                xlim=[self.first_date, self.second_date])
+                
+                if len(self.first_date) > 7 or len(self.second_date) > 7:
+                    data[[selectedValues, '{} Trend'.format(selectedValues), 'Upper', 'Lower']].plot(figsize=(float(self.figSizeX.text() ), 
+                                                                    float(self.figSizeY.text()) ),
+                                                                    xlim=[self.first_date, self.second_date])
+                else:
+                    data[[selectedValues, '{} Trend'.format(selectedValues), 'Upper', 'Lower']].plot(figsize=(float(self.figSizeX.text() ), 
+                                                                    float(self.figSizeY.text()) ) )
                 plt.ylabel(self.yTitle.text() )
                 plt.xlabel(self.xTitle.text() )
                 plt.title(self.graphTitle.text() )
@@ -606,6 +623,9 @@ class Window (QtWidgets.QWidget):
                                             float(self.figSizeY.text()) ), 
                                             dpi=100)
                 axes = fig_lineGraph.add_axes([0.1, 0.1, 0.8, 0.8])
+                self.singleColumn = self.mainDF['{}'.format(self.columns.currentItem().text() )]
+                self.X = self.singleColumn
+
                 axes.plot(self.X)
                 axes.set_xlabel(str(self.xTitle.text() ))
                 axes.set_ylabel(str(self.yTitle.text() ))
