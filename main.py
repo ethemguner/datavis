@@ -504,7 +504,7 @@ class Window (QtWidgets.QWidget):
 
             self.columns.setEnabled(True)
             font.adjust_font(self.columns, "QListWidget", "Trebuchet MS", 
-                            font_size=12, bold=True, color="#FFBD06", bg_color="#5F5F5F")
+                            font_size=12, color="#FFBD06", bg_color="#5F5F5F")
 
             self.infoLabel.setText("Selected columns: {}".format(self.MULTIPLE_COLUMNS) )
             font.adjust_font(self.infoLabel, "QLabel", 
@@ -736,7 +736,7 @@ class Window (QtWidgets.QWidget):
                         font_size=14, bold=True, color="#0098FB")
 
         font.adjust_font(self.columns, "QListWidget", "Trebuchet MS", 
-                        font_size=12, bold=True, color="#FFBD06", bg_color="#5F5F5F")
+                        font_size=12, color="#FFBD06", bg_color="#5F5F5F")
 
         font.adjust_font(self.columnsLabel, "QLabel", "Candara", 
                         font_size=13, color="#DADADA")
