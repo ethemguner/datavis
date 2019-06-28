@@ -7,6 +7,7 @@ import sys
 from Font import font
 import xlsxwriter
 import xlrd
+import welcomePage
 
 class Window (QtWidgets.QWidget):
     def __init__(self):
@@ -51,6 +52,8 @@ class Window (QtWidgets.QWidget):
     def setAllToolTips(self):
         self.loadFile_Button.setToolTip('<b>%s</b><br><img src="%s">' % ("Tool Tip 1", ".\\app_photos\\load_file_info.png"))
         self.browseData_Button.setToolTip('<b>%s</b><br><img src="%s">' % ("Tool Tip 2", ".\\app_photos\\Browse_data_info.png"))
+        self.lineThicknessTip.setToolTip('<b>%s</b><br><img src="%s">' % ("Tool Tip 3", ".\\app_photos\\lineStyles.png"))
+        self.markerTip.setToolTip('<b>%s</b><br><img src="%s">' % ("Tool Tip 4", ".\\app_photos\\markerStyles.png"))
 
     def disableWidgets(self):
         #Line chart widgets
@@ -116,8 +119,8 @@ class Window (QtWidgets.QWidget):
         self.figSizeX.setFixedWidth(250)
         self.figSizeY.setPlaceholderText("inch type")
         self.figSizeY.setFixedWidth(250)
-        self.date1.setPlaceholderText("yy-mm-dd")
-        self.date2.setPlaceholderText("yy-mm-dd")
+        self.date1.setPlaceholderText("yyyy-mm-dd")
+        self.date2.setPlaceholderText("yyyy-mm-dd")
         self.trendNoice.setPlaceholderText("effect rate")
 
         self.rbGroup.addButton(self.timeSeriesRB)
@@ -126,6 +129,7 @@ class Window (QtWidgets.QWidget):
     def ui(self):
         #Empty Label
         self.emptyLabel         = QtWidgets.QLabel("")
+        self.emptyLabel2        = QtWidgets.QLabel("")
 
         #FILE SECTION.
         self.loadFile_Label     = QtWidgets.QLabel("FILE")
@@ -151,9 +155,9 @@ class Window (QtWidgets.QWidget):
         self.rbGroup            = QtWidgets.QButtonGroup()
         self.trendNoice         = QtWidgets.QLineEdit()
         self.bollingerBandsCB   = QtWidgets.QCheckBox("Bollinger Bands")
-        self.spinboxLabel       = QtWidgets.QLabel("Line Thickness & Style:  ")
+        self.spinboxLabel       = QtWidgets.QLabel("Line Thickness & Style\t: ")
         self.spinbox            = QtWidgets.QDoubleSpinBox()
-        self.markerLabel        = QtWidgets.QLabel("Marker Style & Size:  ")
+        self.markerLabel        = QtWidgets.QLabel("Marker Style & Size\t: ")
         self.markerCB           = QtWidgets.QComboBox()
         self.markerSizeSpinBox  = QtWidgets.QDoubleSpinBox()
         self.lineStyleCB        = QtWidgets.QComboBox()
@@ -175,6 +179,8 @@ class Window (QtWidgets.QWidget):
         self.datelabel2         = QtWidgets.QLabel("and")
         self.date2              = QtWidgets.QLineEdit()
         self.setDateButton      = QtWidgets.QPushButton("SET")
+        self.lineThicknessTip   = QtWidgets.QLabel("See styles.")
+        self.markerTip          = QtWidgets.QLabel("See markers.")
 
         #PRINT GRAPH
         self.printGraph         = QtWidgets.QPushButton("Create Graph")
@@ -202,6 +208,7 @@ class Window (QtWidgets.QWidget):
         dateSettingsHBox    = QtWidgets.QHBoxLayout()
         spinboxHBox         = QtWidgets.QHBoxLayout()
         markerHBox          = QtWidgets.QHBoxLayout()
+        emptyLayout2        = QtWidgets.QHBoxLayout()
 
         vbox.addWidget(self.loadFile_Label)
         buttonsLayout.addWidget(self.loadFile_Button)
@@ -216,11 +223,14 @@ class Window (QtWidgets.QWidget):
         spinboxHBox.addWidget(self.spinboxLabel)
         spinboxHBox.addWidget(self.spinbox)
         spinboxHBox.addWidget(self.lineStyleCB)
+        spinboxHBox.addWidget(self.lineThicknessTip)
         spinboxHBox.addStretch()
         markerHBox.addWidget(self.markerLabel)
         markerHBox.addWidget(self.markerSizeSpinBox)
         markerHBox.addWidget(self.markerCB)
+        markerHBox.addWidget(self.markerTip)
         markerHBox.addStretch()
+        emptyLayout2.addWidget(self.emptyLabel2)
         emptyHBox.addWidget(self.emptyLabel)
         xTitlesHBox.addWidget(self.xTitleLabel)
         xTitlesHBox.addWidget(self.xTitle)
@@ -259,6 +269,7 @@ class Window (QtWidgets.QWidget):
         vbox.addLayout(emptyHBox)
         vbox.addLayout(spinboxHBox)
         vbox.addLayout(markerHBox)
+        vbox.addLayout(emptyLayout2)
         vbox.addLayout(xTitlesHBox)
         vbox.addLayout(yTitlesHBox)
         vbox.addLayout(titleGraphHBox)
@@ -824,6 +835,10 @@ class Window (QtWidgets.QWidget):
 
         font.adjust_font(self.figSizeY, "QLineEdit", "Trebuchet MS", 
                         font_size=10, color="#000000", bg_color="#9E9E9E")
+        
+        font.adjust_font(self.lineThicknessTip, "QLabel", font_type= "Calibri", color="#DCDCDC", font_size= 10, italic=True)
+
+        font.adjust_font(self.markerTip, "QLabel", font_type= "Calibri", color="#DCDCDC", font_size= 10, italic=True)
 
         #DATA SETTINGS FONT ADJUSTMENTS
         font.adjust_font(self.dataSettingsLabel, "QLabel", "Trebuchet MS", 
