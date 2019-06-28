@@ -33,17 +33,18 @@ class Window (QtWidgets.QWidget):
         self.spinbox.setMaximum(7.0000000000000036)
         self.markerSizeSpinBox.setSuffix(" inch")
         self.markerSizeSpinBox.setSingleStep(0.2)
-        self.markerSizeSpinBox.setMaximum(7.0000000000000036)
+        self.markerSizeSpinBox.setMaximum(11.99999999999999)
         self.markerCB.addItem("Set Marker")
         self.markerCB.addItems(["Filled Square", "Filled Circle", "X"])
-        self.lineWidth = 1.00
+        self.lineWidth = 1.60
         self.markerSize = 0
         self.markerStyle = '.'
+        self.lineStyleCB.addItem("Set Style")
+        self.lineStyleCB.addItems(["Straight Line", "Dotted Line", "Intermittent Line"])
+        self.lineStyle = "-"
 
     def centerOnScreen(self):
         resolution = QtWidgets.QDesktopWidget().screenGeometry()
-        print("Width:", resolution.width())
-        print("Height:", resolution.height())
         self.move((resolution.width() / 2) - (self.frameSize().width() / 2),
                   (resolution.height() / 2) - (self.frameSize().height() / 2))
 
@@ -94,14 +95,16 @@ class Window (QtWidgets.QWidget):
         self.printGraph.setFixedWidth(140)
         self.columns.setFixedWidth(350)
         self.trendNoice.setFixedWidth(80)
-        self.thicknessButton.setFixedWidth(80)
         self.spinbox.setFixedWidth(70)
         self.spinbox.setFixedHeight(27)
         self.markerCB.setFixedHeight(27)
         self.markerCB.setFixedWidth(80)
         self.markerSizeSpinBox.setFixedHeight(27)
         self.markerSizeSpinBox.setFixedWidth(70)
+        self.lineStyleCB.setFixedWidth(80)
+        self.lineStyleCB.setFixedHeight(27)
         self.infoLabel.setAlignment(QtCore.Qt.AlignCenter)
+        
 
         self.yTitle.setPlaceholderText("for instance: Price")
         self.yTitle.setFixedWidth(250)
@@ -119,7 +122,6 @@ class Window (QtWidgets.QWidget):
 
         self.rbGroup.addButton(self.timeSeriesRB)
         self.rbGroup.addButton(self.lineChartRB)
-
 
     def ui(self):
         #Empty Label
@@ -149,13 +151,12 @@ class Window (QtWidgets.QWidget):
         self.rbGroup            = QtWidgets.QButtonGroup()
         self.trendNoice         = QtWidgets.QLineEdit()
         self.bollingerBandsCB   = QtWidgets.QCheckBox("Bollinger Bands")
-        self.spinboxLabel       = QtWidgets.QLabel("Line Thickness:  ")
+        self.spinboxLabel       = QtWidgets.QLabel("Line Thickness & Style:  ")
         self.spinbox            = QtWidgets.QDoubleSpinBox()
-        self.thicknessButton    = QtWidgets.QPushButton("SET")
         self.markerLabel        = QtWidgets.QLabel("Marker Style & Size:  ")
         self.markerCB           = QtWidgets.QComboBox()
         self.markerSizeSpinBox  = QtWidgets.QDoubleSpinBox()
-        self.markerButton       = QtWidgets.QPushButton("SET")
+        self.lineStyleCB        = QtWidgets.QComboBox()
 
         #DATA SETTINGS
         self.dataSettingsLabel  = QtWidgets.QLabel("\nDATA SETTINGS")
@@ -214,12 +215,11 @@ class Window (QtWidgets.QWidget):
         rbHBox.addWidget(self.bollingerBandsCB)
         spinboxHBox.addWidget(self.spinboxLabel)
         spinboxHBox.addWidget(self.spinbox)
-        spinboxHBox.addWidget(self.thicknessButton)
+        spinboxHBox.addWidget(self.lineStyleCB)
         spinboxHBox.addStretch()
         markerHBox.addWidget(self.markerLabel)
         markerHBox.addWidget(self.markerSizeSpinBox)
         markerHBox.addWidget(self.markerCB)
-        markerHBox.addWidget(self.markerButton)
         markerHBox.addStretch()
         emptyHBox.addWidget(self.emptyLabel)
         xTitlesHBox.addWidget(self.xTitleLabel)
@@ -293,8 +293,10 @@ class Window (QtWidgets.QWidget):
         self.dateCheckBox.toggled.connect(self.enableTimesSeriesQLines)
         self.setDateButton.clicked.connect(self.setDate)
         self.trendCheckBox.toggled.connect(self.enableTrendWidgets)
-        self.thicknessButton.clicked.connect(self.setLineThickness)
-        self.markerButton.clicked.connect(self.setMarkerStyle)
+        self.spinbox.valueChanged.connect(self.setLineThickness)
+        self.markerSizeSpinBox.valueChanged.connect(self.setMarkerSize)
+        self.markerCB.currentIndexChanged.connect(self.setMarkerStyle)
+        self.lineStyleCB.currentIndexChanged.connect(self.setLineStyle)
 
     def setMarkerStyle(self):
         if self.markerCB.currentIndex() == 1:
@@ -306,11 +308,27 @@ class Window (QtWidgets.QWidget):
         elif self.markerCB.currentIndex() == 3:
             self.markerStyle = "x"
             print(self.markerStyle)
-        
+    
+    def setMarkerSize(self):
         self.markerSize = self.markerSizeSpinBox.value()
+        print(self.markerSize)
 
     def setLineThickness(self):
         self.lineWidth = self.spinbox.value()
+        print(self.lineWidth)
+    
+    def setLineStyle(self):
+        if self.lineStyleCB.currentIndex() == 1:
+            self.lineStyle = "-"
+            print(self.lineStyle)
+
+        elif self.lineStyleCB.currentIndex() == 2:
+            self.lineStyle = ":"
+            print(self.lineStyle)
+
+        elif self.lineStyleCB.currentIndex() == 3:
+            self.lineStyle = "--"
+            print(self.lineStyle)
 
     def enableTrendWidgets(self):
         if self.trendCheckBox.isChecked() == True:
@@ -537,6 +555,7 @@ class Window (QtWidgets.QWidget):
                         bg_color="#5F5F5F")
 
     def dataBrowse(self):
+
         try:
             self.isItSingleColumn = False
             self.openPage = DataBrowser(self.mainDF, self.isItSingleColumn)
@@ -544,13 +563,14 @@ class Window (QtWidgets.QWidget):
             self.failureLoad()
 
     def columnBrowse(self):
+
         try:
             self.isItSingleColumn = True
             self.singleColumn = self.mainDF['{}'.format(self.columns.currentItem().text() )]
             self.openPage = DataBrowser(self.singleColumn, self.isItSingleColumn)
         except AttributeError:
             self.failureLoad()
-    
+
     def definingData(self):
 
         if self.multipleColCB.isChecked() == True:
@@ -575,13 +595,6 @@ class Window (QtWidgets.QWidget):
             print("it was at this moment, he knew, he fucked up (graph type)")
         
     def timeSeriesGraph(self):
-        """
-        data['{}: 90 Day Mean'.format(selectedValues)] = data['{}'.format(selectedValues)].rolling(window=90).mean()
-
-        data[[selectedValues, '{}: 90 Day Mean'.format(selectedValues)]].plot(figsize=(float(self.figSizeX.text() ), 
-                                                        float(self.figSizeY.text()) ),
-                                                        xlim=[self.first_date, self.second_date])
-        """
         try:
             if self.trendCheckBox.isChecked() == False:
                 print("no trend!")
@@ -592,7 +605,8 @@ class Window (QtWidgets.QWidget):
                     data[selectedValues].plot(figsize=(float(self.figSizeX.text() ), float(self.figSizeY.text()) ),
                                                                     xlim=[self.first_date, self.second_date],
                                                                     linewidth = int(self.lineWidth),
-                                                                    marker = self.markerStyle, markersize = int(self.markerSize)
+                                                                    marker = self.markerStyle, markersize = int(self.markerSize),
+                                                                    linestyle = self.lineStyle
                                                                     )
                     plt.ylabel(self.yTitle.text() )
                     plt.xlabel(self.xTitle.text() )
@@ -602,7 +616,9 @@ class Window (QtWidgets.QWidget):
                     selectedValues = self.columns.currentItem().text()
                     data = pd.read_csv(self.fName[0],index_col='Date',parse_dates=True)
                     data[selectedValues].plot(figsize=(float(self.figSizeX.text() ), float(self.figSizeY.text()) ), 
-                                              linewidth = int(self.lineWidth), marker = self.markerStyle, markersize = int(self.markerSize) )
+                                              linewidth = int(self.lineWidth), 
+                                              marker = self.markerStyle, markersize = int(self.markerSize),
+                                              linestyle = self.lineStyle )
 
                     plt.ylabel(self.yTitle.text() )
                     plt.xlabel(self.xTitle.text() )
@@ -627,12 +643,14 @@ class Window (QtWidgets.QWidget):
                                                                     float(self.figSizeY.text()) ),
                                                                     xlim=[self.first_date, self.second_date],
                                                                     linewidth = int(self.lineWidth),
-                                                                    marker = self.markerStyle, markersize = int(self.markerSize))
+                                                                    marker = self.markerStyle, markersize = int(self.markerSize),
+                                                                    linestyle = self.lineStyle)
                 else:
                     data[[selectedValues, '{} Trend'.format(selectedValues)]].plot(figsize=(float(self.figSizeX.text() ), 
                                                                     float(self.figSizeY.text()) ),
                                                                     linewidth = int(self.lineWidth),
-                                                                    marker = self.markerStyle, markersize = int(self.markerSize))
+                                                                    marker = self.markerStyle, markersize = int(self.markerSize),
+                                                                    linestyle = self.lineStyle)
                 plt.ylabel(self.yTitle.text() )
                 plt.xlabel(self.xTitle.text() )
                 plt.title(self.graphTitle.text() )
@@ -655,12 +673,14 @@ class Window (QtWidgets.QWidget):
                                                                     float(self.figSizeY.text()) ),
                                                                     xlim=[self.first_date, self.second_date],
                                                                     linewidth = int(self.lineWidth),
-                                                                    marker = self.markerStyle, markersize = int(self.markerSize))
+                                                                    marker = self.markerStyle, markersize = int(self.markerSize),
+                                                                    linestyle = self.lineStyle)
                 else:
                     data[[selectedValues, '{} Trend'.format(selectedValues), 'Upper', 'Lower']].plot(figsize=(float(self.figSizeX.text() ), 
                                                                     float(self.figSizeY.text()) ),
                                                                     linewidth = int(self.lineWidth),
-                                                                    marker = self.markerStyle, markersize = int(self.markerSize))
+                                                                    marker = self.markerStyle, markersize = int(self.markerSize),
+                                                                    linestyle = self.lineStyle)
                 plt.ylabel(self.yTitle.text() )
                 plt.xlabel(self.xTitle.text() )
                 plt.title(self.graphTitle.text() )
@@ -692,7 +712,7 @@ class Window (QtWidgets.QWidget):
                 self.singleColumn = self.mainDF['{}'.format(self.columns.currentItem().text() )]
                 self.X = self.singleColumn
 
-                axes.plot(self.X, linewidth = self.lineWidth, marker = self.markerStyle, markersize = int(self.markerSize))
+                axes.plot(self.X, linewidth = self.lineWidth, marker = self.markerStyle, markersize = int(self.markerSize), linestyle = self.lineStyle)
                 axes.set_xlabel(str(self.xTitle.text() ))
                 axes.set_ylabel(str(self.yTitle.text() ))
                 axes.set_title(str(self.graphTitle.text() ))
@@ -702,7 +722,7 @@ class Window (QtWidgets.QWidget):
             except ValueError:
                 fig_lineGraph = plt.figure()
                 axes = fig_lineGraph.add_axes([0.1, 0.1, 0.8, 0.8])
-                axes.plot(self.X, linewidth = self.lineWidth, marker = self.markerStyle, markersize = int(self.markerSize))
+                axes.plot(self.X, linewidth = self.lineWidth, marker = self.markerStyle, markersize = int(self.markerSize), linestyle = self.lineStyle)
                 axes.grid(True)
                 plt.show()
 
@@ -711,13 +731,13 @@ class Window (QtWidgets.QWidget):
                 fig_lineGraph = plt.figure(figsize=(float(self.figSizeX.text() ), 
                                             float(self.figSizeY.text()) ), 
                                             dpi=100,
-                                            linewidth = self.lineWidth, marker = self.markerStyle, markersize = int(self.markerSize))
+                                            linewidth = self.lineWidth, marker = self.markerStyle, markersize = int(self.markerSize), linestyle = self.lineStyle)
 
                 axes = fig_lineGraph.add_axes([0.1, 0.1, 0.8, 0.8])
 
                 for i in range(0, len(self.MULTIPLE_COLUMNS)):
                     axes.plot(self.mainDF[self.MULTIPLE_COLUMNS[i]], label=self.MULTIPLE_COLUMNS[i],
-                                          linewidth = self.lineWidth, marker = self.markerStyle, markersize = int(self.markerSize))
+                                          linewidth = self.lineWidth, marker = self.markerStyle, markersize = int(self.markerSize), linestyle = self.lineStyle)
 
                 axes.set_xlabel(str(self.xTitle.text() ))
                 axes.set_ylabel(str(self.yTitle.text() ))
@@ -847,21 +867,14 @@ class Window (QtWidgets.QWidget):
                         font_size=12, bold=True, color="#0098FB", 
                         bg_color="black")
 
-        font.adjust_font(self.thicknessButton, "QPushButton", "Candara", 
-                        font_size=12, bold=True, color="#0098FB", 
-                        bg_color="black")
-
-        font.adjust_font(self.markerButton, "QPushButton", "Candara", 
-                        font_size=12, bold=True, color="#0098FB", 
-                        bg_color="black")
-
         #SUB TITLES
         font.adjust_font(self.LChartLabel, "QLabel", "Trebuchet MS", 
                         font_size=11, color="#EEEE00")
 
         font.adjust_font(self.tSeriesLabel, "QLabel", "Trebuchet MS", 
                         font_size=11, color="#EEEE00")
-            
+
+
 class DataBrowser(QtWidgets.QWidget):
     def __init__(self, df, condition):
         super().__init__()
