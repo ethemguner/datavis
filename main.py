@@ -98,16 +98,16 @@ class Window (QtWidgets.QWidget):
         self.printGraph.setFixedWidth(140)
         self.columns.setFixedWidth(350)
         self.trendNoice.setFixedWidth(80)
-        self.spinbox.setFixedWidth(70)
+        self.spinbox.setFixedWidth(73)
         self.spinbox.setFixedHeight(27)
         self.markerCB.setFixedHeight(27)
         self.markerCB.setFixedWidth(80)
         self.markerSizeSpinBox.setFixedHeight(27)
-        self.markerSizeSpinBox.setFixedWidth(70)
+        self.markerSizeSpinBox.setFixedWidth(73)
         self.lineStyleCB.setFixedWidth(80)
         self.lineStyleCB.setFixedHeight(27)
         self.infoLabel.setAlignment(QtCore.Qt.AlignCenter)
-        
+        self.columnsLabel.setAlignment(QtCore.Qt.AlignCenter)
 
         self.yTitle.setPlaceholderText("for instance: Price")
         self.yTitle.setFixedWidth(250)
@@ -264,6 +264,9 @@ class Window (QtWidgets.QWidget):
         
         vbox.addLayout(buttonsLayout)
         vbox.addLayout(infoHLayout)
+        vbox.addLayout(dataColLabHBox)
+        vbox.addLayout(columnListHBox)
+        vbox.addLayout(buttonHBox)
         vbox.addLayout(settingHBox)
         vbox.addLayout(rbHBox)
         vbox.addLayout(emptyHBox)
@@ -281,9 +284,6 @@ class Window (QtWidgets.QWidget):
         vbox.addLayout(emptyHBox)
         vbox.addLayout(tSeriesLabelHBox)
         vbox.addLayout(dateSettingsHBox)
-        vbox.addLayout(dataColLabHBox)
-        vbox.addLayout(columnListHBox)
-        vbox.addLayout(buttonHBox)
         vbox.addLayout(printGraphHBox)
         vbox.addStretch()
 
@@ -723,7 +723,8 @@ class Window (QtWidgets.QWidget):
                 self.singleColumn = self.mainDF['{}'.format(self.columns.currentItem().text() )]
                 self.X = self.singleColumn
 
-                axes.plot(self.X, linewidth = self.lineWidth, marker = self.markerStyle, markersize = int(self.markerSize), linestyle = self.lineStyle)
+                axes.plot(self.X, linewidth = self.lineWidth, marker = self.markerStyle, 
+                          markersize = int(self.markerSize), linestyle = self.lineStyle)
                 axes.set_xlabel(str(self.xTitle.text() ))
                 axes.set_ylabel(str(self.yTitle.text() ))
                 axes.set_title(str(self.graphTitle.text() ))
@@ -733,7 +734,8 @@ class Window (QtWidgets.QWidget):
             except ValueError:
                 fig_lineGraph = plt.figure()
                 axes = fig_lineGraph.add_axes([0.1, 0.1, 0.8, 0.8])
-                axes.plot(self.X, linewidth = self.lineWidth, marker = self.markerStyle, markersize = int(self.markerSize), linestyle = self.lineStyle)
+                axes.plot(self.X, linewidth = self.lineWidth, marker = self.markerStyle, 
+                          markersize = int(self.markerSize), linestyle = self.lineStyle)
                 axes.grid(True)
                 plt.show()
 
@@ -741,14 +743,16 @@ class Window (QtWidgets.QWidget):
             try:
                 fig_lineGraph = plt.figure(figsize=(float(self.figSizeX.text() ), 
                                             float(self.figSizeY.text()) ), 
-                                            dpi=100,
-                                            linewidth = self.lineWidth, marker = self.markerStyle, markersize = int(self.markerSize), linestyle = self.lineStyle)
+                                            dpi=100, linewidth = self.lineWidth, 
+                                            marker = self.markerStyle, markersize = int(self.markerSize), 
+                                            linestyle = self.lineStyle)
 
                 axes = fig_lineGraph.add_axes([0.1, 0.1, 0.8, 0.8])
 
                 for i in range(0, len(self.MULTIPLE_COLUMNS)):
                     axes.plot(self.mainDF[self.MULTIPLE_COLUMNS[i]], label=self.MULTIPLE_COLUMNS[i],
-                                          linewidth = self.lineWidth, marker = self.markerStyle, markersize = int(self.markerSize), linestyle = self.lineStyle)
+                                          linewidth = self.lineWidth, marker = self.markerStyle, 
+                                          markersize = int(self.markerSize), linestyle = self.lineStyle)
 
                 axes.set_xlabel(str(self.xTitle.text() ))
                 axes.set_ylabel(str(self.yTitle.text() ))
@@ -771,7 +775,6 @@ class Window (QtWidgets.QWidget):
                 plt.show()
 
     def theme(self):
-        #FILE SECTION
         font.adjust_font(self.loadFile_Label, "QLabel", "Trebuchet MS", 
                         font_size=14, bold=True, color="#0098FB")
 
@@ -787,7 +790,6 @@ class Window (QtWidgets.QWidget):
                         font_size=12, bold=True, color="black", 
                         bg_color="#5F5F5F")
 
-        #GRAPH SETTINGS FONT ADJUSTMENTS
         font.adjust_font(self.settingsLabel, "QLabel", "Trebuchet MS", 
                         font_size=14, bold=True, color="#0098FB")
 
@@ -840,7 +842,6 @@ class Window (QtWidgets.QWidget):
 
         font.adjust_font(self.markerTip, "QLabel", font_type= "Calibri", color="#DCDCDC", font_size= 10, italic=True)
 
-        #DATA SETTINGS FONT ADJUSTMENTS
         font.adjust_font(self.dataSettingsLabel, "QLabel", "Trebuchet MS", 
                         font_size=14, bold=True, color="#0098FB")
 
@@ -882,12 +883,23 @@ class Window (QtWidgets.QWidget):
                         font_size=12, bold=True, color="#0098FB", 
                         bg_color="black")
 
-        #SUB TITLES
         font.adjust_font(self.LChartLabel, "QLabel", "Trebuchet MS", 
                         font_size=11, color="#EEEE00")
 
         font.adjust_font(self.tSeriesLabel, "QLabel", "Trebuchet MS", 
                         font_size=11, color="#EEEE00")
+        
+        font.adjust_font(self.lineStyleCB, "QComboBox", font_type="Calibri",
+                        font_size=11, bg_color="#B2B0B0", color="black")
+
+        font.adjust_font(self.markerCB, "QComboBox", font_type="Calibri",
+                        font_size=11, bg_color="#B2B0B0", color="black")
+
+        font.adjust_font(self.spinbox, "QSpinBox", font_type="Calibri",
+                        font_size=10, color="black")
+
+        font.adjust_font(self.markerSizeSpinBox, "QSpinBox", font_type="Calibri",
+                        font_size=10, color="black")
 
 
 class DataBrowser(QtWidgets.QWidget):
@@ -911,7 +923,6 @@ class DataBrowser(QtWidgets.QWidget):
         self.show()
 
     def setTable(self, df, condition):
-        print(condition)
         if condition == False:
             self.df_row = df.shape[0]
             self.df_col = df.shape[1]
