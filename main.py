@@ -22,11 +22,11 @@ class Window (QtWidgets.QWidget):
         self.first_date = "default"
         self.second_date = "default"
         plt.style.use('seaborn-darkgrid')
-        self.setWindowTitle("DataVis")
+        self.setWindowTitle("DataVis - Personal Graph Creator")
         self.setWindowIcon(QtGui.QIcon('.\\app_photos\\window_icon.png'))
         self.setGeometry(0, 0, 550, 850)
         self.centerOnScreen()
-        self.figSizeX.setText("13") 
+        self.figSizeX.setText("9") 
         self.figSizeY.setText("6")
         self.MULTIPLE_CHOICE = False
         self.spinbox.setSuffix(" inch")
@@ -43,6 +43,9 @@ class Window (QtWidgets.QWidget):
         self.lineStyleCB.addItem("Set Style")
         self.lineStyleCB.addItems(["Straight Line", "Dotted Line", "Intermittent Line"])
         self.lineStyle = "-"
+        self.y_fontSize = 12
+        self.x_fontSize = 12
+        self.titleFontSize = 14
 
     def centerOnScreen(self):
         resolution = QtWidgets.QDesktopWidget().screenGeometry()
@@ -101,24 +104,24 @@ class Window (QtWidgets.QWidget):
         self.spinbox.setFixedWidth(73)
         self.spinbox.setFixedHeight(27)
         self.markerCB.setFixedHeight(27)
-        self.markerCB.setFixedWidth(80)
+        self.markerCB.setFixedWidth(94)
         self.markerSizeSpinBox.setFixedHeight(27)
         self.markerSizeSpinBox.setFixedWidth(73)
-        self.lineStyleCB.setFixedWidth(80)
+        self.lineStyleCB.setFixedWidth(94)
         self.lineStyleCB.setFixedHeight(27)
         self.infoLabel.setAlignment(QtCore.Qt.AlignCenter)
         self.columnsLabel.setAlignment(QtCore.Qt.AlignCenter)
 
         self.yTitle.setPlaceholderText("for instance: Price")
-        self.yTitle.setFixedWidth(250)
+        self.yTitle.setFixedWidth(150)
         self.xTitle.setPlaceholderText("for instance: Date")
-        self.xTitle.setFixedWidth(250)
+        self.xTitle.setFixedWidth(150)
         self.graphTitle.setPlaceholderText("the title of graph")
-        self.graphTitle.setFixedWidth(250)
+        self.graphTitle.setFixedWidth(150)
         self.figSizeX.setPlaceholderText("inch type")
-        self.figSizeX.setFixedWidth(250)
+        self.figSizeX.setFixedWidth(150)
         self.figSizeY.setPlaceholderText("inch type")
-        self.figSizeY.setFixedWidth(250)
+        self.figSizeY.setFixedWidth(150)
         self.date1.setPlaceholderText("yyyy-mm-dd")
         self.date2.setPlaceholderText("yyyy-mm-dd")
         self.trendNoice.setPlaceholderText("effect rate")
@@ -142,14 +145,14 @@ class Window (QtWidgets.QWidget):
         self.timeSeriesRB       = QtWidgets.QRadioButton("Time Series")
         self.lineChartRB        = QtWidgets.QRadioButton("Line")
         self.trendCheckBox      = QtWidgets.QCheckBox("Show Trend")
-        self.yTitleLabel        = QtWidgets.QLabel("Title of y Line\t")
-        self.xTitleLabel        = QtWidgets.QLabel("Title of x Line\t")
-        self.graphTitleLabel    = QtWidgets.QLabel("Title of Graph\t")
+        self.yTitleLabel        = QtWidgets.QLabel("Title of y Line\t\t   ")
+        self.xTitleLabel        = QtWidgets.QLabel("Title of x Line\t\t   ")
+        self.graphTitleLabel    = QtWidgets.QLabel("Title of Graph\t\t   ")
         self.yTitle             = QtWidgets.QLineEdit()
         self.xTitle             = QtWidgets.QLineEdit()
         self.graphTitle         = QtWidgets.QLineEdit()
-        self.figSizeLabelX      = QtWidgets.QLabel("Fig. size horizontal")
-        self.figSizeLabelY      = QtWidgets.QLabel("Fig. size vertical")
+        self.figSizeLabelX      = QtWidgets.QLabel("Fig. size horizontal\t\t   ")
+        self.figSizeLabelY      = QtWidgets.QLabel("Fig. size vertical\t\t   ")
         self.figSizeX           = QtWidgets.QLineEdit()
         self.figSizeY           = QtWidgets.QLineEdit()
         self.rbGroup            = QtWidgets.QButtonGroup()
@@ -161,6 +164,12 @@ class Window (QtWidgets.QWidget):
         self.markerCB           = QtWidgets.QComboBox()
         self.markerSizeSpinBox  = QtWidgets.QDoubleSpinBox()
         self.lineStyleCB        = QtWidgets.QComboBox()
+        self.y_fontSizeLabel    = QtWidgets.QLabel("Font Size:")
+        self.y_fontSizeSpinBox  = QtWidgets.QSpinBox()
+        self.x_fontSizeLabel    = QtWidgets.QLabel("Font Size:")
+        self.x_fontSizeSpinBox  = QtWidgets.QSpinBox()
+        self.titleFontSizeLB    = QtWidgets.QLabel("Font Size:")
+        self.titleFontSizeSB    = QtWidgets.QSpinBox()
 
         #DATA SETTINGS
         self.dataSettingsLabel  = QtWidgets.QLabel("\nDATA SETTINGS")
@@ -184,7 +193,7 @@ class Window (QtWidgets.QWidget):
 
         #PRINT GRAPH
         self.printGraph         = QtWidgets.QPushButton("Create Graph")
-        
+
         vbox                = QtWidgets.QVBoxLayout()
         hbox                = QtWidgets.QHBoxLayout()
         buttonsLayout       = QtWidgets.QHBoxLayout()
@@ -234,14 +243,25 @@ class Window (QtWidgets.QWidget):
         emptyHBox.addWidget(self.emptyLabel)
         xTitlesHBox.addWidget(self.xTitleLabel)
         xTitlesHBox.addWidget(self.xTitle)
+        xTitlesHBox.addWidget(self.x_fontSizeLabel)
+        xTitlesHBox.addWidget(self.x_fontSizeSpinBox)
+        xTitlesHBox.addStretch()
         yTitlesHBox.addWidget(self.yTitleLabel)
         yTitlesHBox.addWidget(self.yTitle)
+        yTitlesHBox.addWidget(self.y_fontSizeLabel)
+        yTitlesHBox.addWidget(self.y_fontSizeSpinBox)
+        yTitlesHBox.addStretch()
         titleGraphHBox.addWidget(self.graphTitleLabel)
         titleGraphHBox.addWidget(self.graphTitle)
+        titleGraphHBox.addWidget(self.titleFontSizeLB)
+        titleGraphHBox.addWidget(self.titleFontSizeSB)
+        titleGraphHBox.addStretch()
         figSizeXHBox.addWidget(self.figSizeLabelX)
         figSizeXHBox.addWidget(self.figSizeX)
+        figSizeXHBox.addStretch()
         figSizeYHBox.addWidget(self.figSizeLabelY)
         figSizeYHBox.addWidget(self.figSizeY)
+        figSizeYHBox.addStretch()
         dataSettHBox.addWidget(self.dataSettingsLabel)
         LchartSettingsHBox.addWidget(self.LChartLabel)
         lineRBHBox.addWidget(self.multipleColCB)
@@ -306,8 +326,23 @@ class Window (QtWidgets.QWidget):
         self.trendCheckBox.toggled.connect(self.enableTrendWidgets)
         self.spinbox.valueChanged.connect(self.setLineThickness)
         self.markerSizeSpinBox.valueChanged.connect(self.setMarkerSize)
+        self.titleFontSizeSB.valueChanged.connect(self.setTitleFontSize)
+        self.x_fontSizeSpinBox.valueChanged.connect(self.setXfontSize)
+        self.y_fontSizeSpinBox.valueChanged.connect(self.setYfontSize)
         self.markerCB.currentIndexChanged.connect(self.setMarkerStyle)
         self.lineStyleCB.currentIndexChanged.connect(self.setLineStyle)
+        self.y_fontSize = 13
+        self.x_fontSize = 13
+        self.titleFontSize = 15
+
+    def setTitleFontSize(self):
+        self.titleFontSize = int(self.titleFontSizeSB.value())
+
+    def setXfontSize(self):
+        self.x_fontSize = int(self.x_fontSizeSpinBox.value())
+
+    def setYfontSize(self):
+        self.y_fontSize = int(self.y_fontSizeSpinBox.value())
 
     def setMarkerStyle(self):
         if self.markerCB.currentIndex() == 1:
@@ -619,9 +654,9 @@ class Window (QtWidgets.QWidget):
                                                                     marker = self.markerStyle, markersize = int(self.markerSize),
                                                                     linestyle = self.lineStyle
                                                                     )
-                    plt.ylabel(self.yTitle.text() )
-                    plt.xlabel(self.xTitle.text() )
-                    plt.title(self.graphTitle.text() )
+                    plt.ylabel(self.yTitle.text(), fontsize = self.y_fontSize)
+                    plt.xlabel(self.xTitle.text(), fontsize = self.x_fontSize)
+                    plt.title(self.graphTitle.text(), fontsize = self.titleFontSize)
                     plt.show()
                 else:
                     selectedValues = self.columns.currentItem().text()
@@ -631,9 +666,9 @@ class Window (QtWidgets.QWidget):
                                               marker = self.markerStyle, markersize = int(self.markerSize),
                                               linestyle = self.lineStyle )
 
-                    plt.ylabel(self.yTitle.text() )
-                    plt.xlabel(self.xTitle.text() )
-                    plt.title(self.graphTitle.text() )
+                    plt.ylabel(self.yTitle.text(), fontsize = self.y_fontSize)
+                    plt.xlabel(self.xTitle.text(), fontsize = self.x_fontSize)
+                    plt.title(self.graphTitle.text(), fontsize = self.titleFontSize)
                     plt.show()
 
 
@@ -662,9 +697,9 @@ class Window (QtWidgets.QWidget):
                                                                     linewidth = int(self.lineWidth),
                                                                     marker = self.markerStyle, markersize = int(self.markerSize),
                                                                     linestyle = self.lineStyle)
-                plt.ylabel(self.yTitle.text() )
-                plt.xlabel(self.xTitle.text() )
-                plt.title(self.graphTitle.text() )
+                plt.ylabel(self.yTitle.text(), fontsize = self.y_fontSize)
+                plt.xlabel(self.xTitle.text(), fontsize = self.x_fontSize)
+                plt.title(self.graphTitle.text(), fontsize = self.titleFontSize)
                 plt.show()
 
             elif self.trendCheckBox.isChecked() == True and self.bollingerBandsCB.isChecked() == True:
@@ -692,25 +727,25 @@ class Window (QtWidgets.QWidget):
                                                                     linewidth = int(self.lineWidth),
                                                                     marker = self.markerStyle, markersize = int(self.markerSize),
                                                                     linestyle = self.lineStyle)
-                plt.ylabel(self.yTitle.text() )
-                plt.xlabel(self.xTitle.text() )
-                plt.title(self.graphTitle.text() )
+                plt.ylabel(self.yTitle.text(), fontsize = self.y_fontSize)
+                plt.xlabel(self.xTitle.text(), fontsize = self.x_fontSize)
+                plt.title(self.graphTitle.text(), fontsize = self.titleFontSize)
                 plt.show()
 
         except ValueError:
             if len(self.first_date) == 10 and len(self.second_date) == 10:
                 data = pd.read_csv(self.fName[0],index_col='Date',parse_dates=True)
                 data[self.columns.currentItem().text()].plot(xlim=[self.first_date, self.second_date])
-                plt.ylabel(self.yTitle.text() )
-                plt.xlabel(self.xTitle.text() )
-                plt.title(self.graphTitle.text() )
+                plt.ylabel(self.yTitle.text(), fontsize = self.y_fontSize)
+                plt.xlabel(self.xTitle.text(), fontsize = self.x_fontSize)
+                plt.title(self.graphTitle.text(), fontsize = self.titleFontSize)
                 plt.show()
             else:
                 data = pd.read_csv(self.fName[0],index_col='Date',parse_dates=True)
                 data[self.columns.currentItem().text()].plot()
-                plt.ylabel(self.yTitle.text() )
-                plt.xlabel(self.xTitle.text() )
-                plt.title(self.graphTitle.text() )
+                plt.ylabel(self.yTitle.text(), fontsize = self.y_fontSize)
+                plt.xlabel(self.xTitle.text(), fontsize = self.x_fontSize)
+                plt.title(self.graphTitle.text(), fontsize = self.titleFontSize)
                 plt.show()
 
     def lineGraph(self):
@@ -725,9 +760,9 @@ class Window (QtWidgets.QWidget):
 
                 axes.plot(self.X, linewidth = self.lineWidth, marker = self.markerStyle, 
                           markersize = int(self.markerSize), linestyle = self.lineStyle)
-                axes.set_xlabel(str(self.xTitle.text() ))
-                axes.set_ylabel(str(self.yTitle.text() ))
-                axes.set_title(str(self.graphTitle.text() ))
+                axes.set_xlabel(str(self.xTitle.text()), fontsize = self.x_fontSize)
+                axes.set_ylabel(str(self.yTitle.text()), fontsize = self.y_fontSize)
+                axes.set_title(str(self.graphTitle.text()), fontsize = self.titleFontSize)
                 axes.grid(True)
                 plt.show()
                 
@@ -754,9 +789,9 @@ class Window (QtWidgets.QWidget):
                                           linewidth = self.lineWidth, marker = self.markerStyle, 
                                           markersize = int(self.markerSize), linestyle = self.lineStyle)
 
-                axes.set_xlabel(str(self.xTitle.text() ))
-                axes.set_ylabel(str(self.yTitle.text() ))
-                axes.set_title(str(self.graphTitle.text() ))
+                axes.set_xlabel(str(self.xTitle.text()), fontsize = self.x_fontSize)
+                axes.set_ylabel(str(self.yTitle.text()), fontsize = self.y_fontSize)
+                axes.set_title(str(self.graphTitle.text()), fontsize = self.titleFontSize)
 
                 axes.grid(True)
                 axes.legend()
@@ -899,6 +934,24 @@ class Window (QtWidgets.QWidget):
                         font_size=10, color="black")
 
         font.adjust_font(self.markerSizeSpinBox, "QSpinBox", font_type="Calibri",
+                        font_size=10, color="black")
+
+        font.adjust_font(self.titleFontSizeLB, "QLabel", font_type="Trebuchet MS",
+                        font_size=10, color="#F0FFFF")
+
+        font.adjust_font(self.x_fontSizeLabel, "QLabel", font_type="Trebuchet MS",
+                        font_size=10, color="#F0FFFF")
+
+        font.adjust_font(self.y_fontSizeLabel, "QLabel", font_type="Trebuchet MS",
+                        font_size=10, color="#F0FFFF")
+
+        font.adjust_font(self.titleFontSizeSB, "QSpinBox", font_type="Calibri",
+                        font_size=10, color="black")
+
+        font.adjust_font(self.x_fontSizeSpinBox, "QSpinBox", font_type="Calibri",
+                        font_size=10, color="black")
+
+        font.adjust_font(self.y_fontSizeSpinBox, "QSpinBox", font_type="Calibri",
                         font_size=10, color="black")
 
 

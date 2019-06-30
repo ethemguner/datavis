@@ -29,8 +29,11 @@ class WelcomePage(QtWidgets.QWidget):
                 —Line style: Straight Line
                 —Marker: False
                 —Marker Style: Dotted
-                —Grahp size: 13, 6 inch.
-
+                —Grahp size: 9 (horizontal), 6 (vertical) inch.
+                —Graph title font size: 14 px
+                —Grahp x label font size: 12 px
+                —Grahp y label font size: 12 px
+        
                 You're all free to change them!
 
         In the second place, there are a few tips to see details
@@ -42,7 +45,7 @@ class WelcomePage(QtWidgets.QWidget):
 
         See ya!
         E-mail: ethemguener@gmail.com
-        Github: ethemguner""")
+        Github: ethemguner (yeah, that handsome one)""")
         self.infoLabel2.setAlignment(QtCore.Qt.AlignLeft)
 
         font.adjust_font(self.infoLabel, "QLabel", "Trebuchet MS", font_size=10,
