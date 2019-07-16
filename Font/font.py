@@ -1,4 +1,5 @@
-from PyQt5 import QtGui
+from PySide2 import QtWidgets, QtGui
+
 
 def adjust_font(widget, widget_type, font_type="Arial", font_size=10, bold=False, 
                 italic= False, color="black", bg_color=""):

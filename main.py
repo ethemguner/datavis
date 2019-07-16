@@ -2,12 +2,11 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.dates as dates
 import numpy as np 
-from PyQt5 import QtWidgets, QtCore, QtGui
+from PySide2 import QtWidgets, QtCore, QtGui
 import sys
 from Font import font
 import xlsxwriter
 import xlrd
-import welcomePage
 
 class Window (QtWidgets.QWidget):
     def __init__(self):
@@ -24,8 +23,7 @@ class Window (QtWidgets.QWidget):
         plt.style.use('seaborn-darkgrid')
         self.setWindowTitle("DataVis - Personal Graph Creator")
         self.setWindowIcon(QtGui.QIcon('.\\app_photos\\window_icon.png'))
-        self.setGeometry(0, 0, 550, 850)
-        self.centerOnScreen()
+        self.setGeometry(680, 100, 550, 850)
         self.figSizeX.setText("9") 
         self.figSizeY.setText("6")
         self.MULTIPLE_CHOICE = False
@@ -46,11 +44,10 @@ class Window (QtWidgets.QWidget):
         self.y_fontSize = 12
         self.x_fontSize = 12
         self.titleFontSize = 14
-
-    def centerOnScreen(self):
-        resolution = QtWidgets.QDesktopWidget().screenGeometry()
-        self.move((resolution.width() / 2) - (self.frameSize().width() / 2),
-                  (resolution.height() / 2) - (self.frameSize().height() / 2))
+        
+        self.y_fontSizeSpinBox.setValue(self.y_fontSize)
+        self.x_fontSizeSpinBox.setValue(self.x_fontSize)
+        self.titleFontSizeSB.setValue(self.titleFontSize)
 
     def setAllToolTips(self):
         self.loadFile_Button.setToolTip('<b>%s</b><br><img src="%s">' % ("Tool Tip 1", ".\\app_photos\\load_file_info.png"))
@@ -112,15 +109,15 @@ class Window (QtWidgets.QWidget):
         self.infoLabel.setAlignment(QtCore.Qt.AlignCenter)
         self.columnsLabel.setAlignment(QtCore.Qt.AlignCenter)
 
-        self.yTitle.setPlaceholderText("for instance: Price")
+        self.yTitle.setPlaceholderText("for instance, Price")
         self.yTitle.setFixedWidth(150)
-        self.xTitle.setPlaceholderText("for instance: Date")
+        self.xTitle.setPlaceholderText("for instance, Date")
         self.xTitle.setFixedWidth(150)
         self.graphTitle.setPlaceholderText("the title of graph")
         self.graphTitle.setFixedWidth(150)
-        self.figSizeX.setPlaceholderText("inch type")
+        self.figSizeX.setPlaceholderText("inch")
         self.figSizeX.setFixedWidth(150)
-        self.figSizeY.setPlaceholderText("inch type")
+        self.figSizeY.setPlaceholderText("inch")
         self.figSizeY.setFixedWidth(150)
         self.date1.setPlaceholderText("yyyy-mm-dd")
         self.date2.setPlaceholderText("yyyy-mm-dd")
@@ -997,11 +994,11 @@ class DataBrowser(QtWidgets.QWidget):
                 cell = df.iat[rowIndex]
                 self.dataTable.setItem(rowIndex,0, QtWidgets.QTableWidgetItem(str(cell)))
 
-app = QtWidgets.QApplication(sys.argv)
-window = Window()
-#window.move(400, 80)
-#window.setFixedSize(550, 850)
-app.setStyle("Fusion")
-window.setStyleSheet("Window {background : #505050;}")
-sys.exit(app.exec_())
-
+if __name__ == '__main__':
+    app = QtWidgets.QApplication(sys.argv)
+    window = Window()
+    #window.move(400, 80)
+    #window.setFixedSize(550, 850)
+    app.setStyle("Fusion")
+    window.setStyleSheet("Window {background : #505050;}")
+    sys.exit(app.exec_())
