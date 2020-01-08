@@ -1,5 +1,6 @@
 # DataVisualization_practicing
 A practicing project.
+![...](datavis_img.png)
 
 # Requirements
 XlsxWriter==1.1.5
